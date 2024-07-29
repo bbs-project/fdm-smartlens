@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="258bfa63-7969-46ce-aee7-de7864011301" name="Changes" comment="" />
+    <list default="true" id="258bfa63-7969-46ce-aee7-de7864011301" name="Changes" comment="Moved codes from YOLOv5 to YOLOv8.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/CameraView/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/CameraView/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/modelHandler/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/modelHandler/index.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,18 +22,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "klesa4u"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;klesa4u&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/bbs-project/fdm-lens.git",
-    "accountId": "f60497e4-7765-4cd6-85f6-5424ffb49574"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/bbs-project/fdm-lens.git&quot;,
+    &quot;accountId&quot;: &quot;f60497e4-7765-4cd6-85f6-5424ffb49574&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
   </component>
@@ -51,11 +57,12 @@
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/mclee/AndroidStudioProjects/fdm-lens&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.fileTypes&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mclee\AndroidStudioProjects\fdm-lens\yolov8n-tfjs-react-native\assets\model\fdm-yolov8n" />
       <recent name="C:\Users\mclee\AndroidStudioProjects\fdm-lens\yolov8n-tfjs-react-native" />
       <recent name="C:\Users\mclee\AndroidStudioProjects\fdm-lens" />
     </key>
@@ -69,6 +76,23 @@
       <option name="presentableId" value="Default" />
       <updated>1721888554662</updated>
     </task>
+    <task id="LOCAL-00001" summary="Moved codes from YOLOv5 to YOLOv8.">
+      <option name="closed" value="true" />
+      <created>1722240984783</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1722240984783</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Moved codes from YOLOv5 to YOLOv8.">
+      <option name="closed" value="true" />
+      <created>1722241025670</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1722241025670</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -81,5 +105,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Moved codes from YOLOv5 to YOLOv8." />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved codes from YOLOv5 to YOLOv8." />
   </component>
 </project>
