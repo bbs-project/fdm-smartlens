@@ -59,32 +59,38 @@ const CameraView = ({ type, model, inputTensorSize, config, children }) => {
 
         // console.log("input:", input)
 
-//        await model.executeAsync(input).then((res) => {
+        await model.executeAsync(input).then((res) => {
+          console.log("model.executeAsync() result:", res)
 //          const [boxes, scores, classes] = res.slice(0, 3);
-//          const boxesData = boxes.dataSync();
-//          const scoresData = scores.dataSync();
-//          const classesData = classes.dataSync();
-//
-//          renderBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
-//          tf.dispose([res, input]);
-//        });
-
-          const res = model.execute(input)
-          // console.log("model.execute() result:", res)
           const numDetections = res.shape[1];
           const boxes = res.slice([0, 0, 0], [1, numDetections, 4]).squeeze(); // Extract bounding boxes
           const scores = res.slice([0, 0, 4], [1, numDetections, 1]).squeeze(); // Extract scores
           const classes = res.slice([0, 0, 5], [1, numDetections, 1]).squeeze(); // Extract classes
 
-          //const [boxes, scores, classes] = res.slice(0, 3);
           const boxesData = boxes.dataSync();
           const scoresData = scores.dataSync();
           const classesData = classes.dataSync();
+
           renderBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
           tf.dispose([res, input]);
+        });
+
+//          const res = model.execute(input)
+//          // console.log("model.execute() result:", res)
+//          const numDetections = res.shape[1];
+//          const boxes = res.slice([0, 0, 0], [1, numDetections, 4]).squeeze(); // Extract bounding boxes
+//          const scores = res.slice([0, 0, 4], [1, numDetections, 1]).squeeze(); // Extract scores
+//          const classes = res.slice([0, 0, 5], [1, numDetections, 1]).squeeze(); // Extract classes
+//
+//          //const [boxes, scores, classes] = res.slice(0, 3);
+//          const boxesData = boxes.dataSync();
+//          const scoresData = scores.dataSync();
+//          const classesData = classes.dataSync();
+//          renderBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
+//          tf.dispose([res, input]);
 
       } else {
-        console.log("No image tensor found.");
+        // console.log("No image tensor found.");
       }
       requestAnimationFrame(detectFrame);
       tf.engine().endScope();

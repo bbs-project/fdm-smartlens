@@ -10,12 +10,20 @@ import { bundleResourceIO } from "@tensorflow/tfjs-react-native";
 
 // 모델 경로 설정: yolov8n
 // inputTensorSize=[1, 3, 640, 640]
-const modelJson = require("../../assets/model/yolov8n/model.json");
+//const modelJson = require("../../assets/model/yolov8n/model.json");
+//const modelWeights = [
+//  require("../../assets/model/yolov8n/group1-shard1of4.bin"),
+//  require("../../assets/model/yolov8n/group1-shard2of4.bin"),
+//  require("../../assets/model/yolov8n/group1-shard3of4.bin"),
+//  require("../../assets/model/yolov8n/group1-shard4of4.bin"),
+//];
+
+// 모델 경로 설정: fdm-yolov8n
+const modelJson = require("../../assets/model/fdm-yolov8n/model.json");
 const modelWeights = [
-  require("../../assets/model/yolov8n/group1-shard1of4.bin"),
-  require("../../assets/model/yolov8n/group1-shard2of4.bin"),
-  require("../../assets/model/yolov8n/group1-shard3of4.bin"),
-  require("../../assets/model/yolov8n/group1-shard4of4.bin"),
+  require("../../assets/model/fdm-yolov8n/group1-shard1of3.bin"),
+  require("../../assets/model/fdm-yolov8n/group1-shard2of3.bin"),
+  require("../../assets/model/fdm-yolov8n/group1-shard3of3.bin"),
 ];
 
 

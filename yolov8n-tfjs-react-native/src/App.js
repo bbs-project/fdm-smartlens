@@ -37,8 +37,8 @@ const App = () => {
         // warming up model(모델 처음 실행시 발생하는 지연 시간을 줄이는 역할)
         const dummyInput = tf.ones(yolov5.inputs[0].shape);// tf. ones -> 모든 요소가 1인 텐서 생성, 모델의 첫 번째 입력 텐서의 모양 반환(dummy)
         console.log("dummyInput's shape:", yolov5.inputs[0].shape)
-        // await yolov5.executeAsync(dummyInput);// 더미 텐서 실행
-        yolov5.execute(dummyInput);// 더미 텐서 실행
+        await yolov5.executeAsync(dummyInput);// 더미 텐서 실행
+        // yolov5.execute(dummyInput);// 더미 텐서 실행
         tf.dispose(dummyInput);// 텐서를 메모리에서 해제
 
         // set state(모델의 성공상태 Load)
