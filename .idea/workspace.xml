@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="258bfa63-7969-46ce-aee7-de7864011301" name="Changes" comment="Moved codes from YOLOv5 to YOLOv8.">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/CameraView/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/CameraView/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/modelHandler/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/yolov8n-tfjs-react-native/src/modelHandler/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
