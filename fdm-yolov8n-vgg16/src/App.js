@@ -12,6 +12,7 @@ const App = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState("back");
   const [model, setModel] = useState(null);
+  const [modelVgg16, setModelVgg16] = useState(null);
   const [loading, setLoading] = useState({ loading: true, progress: 0 }); // loading state
   const [inputTensor, setInputTensor] = useState([]);
 
@@ -28,22 +29,22 @@ const App = () => {
       }
 
       tf.ready().then(async () => {
-        const yolov5 = await tf.loadGraphModel(modelURI, { // modelURI에 있는 URI를 인자로 받아 모델을 로드함
+        const yolov8 = await tf.loadGraphModel(modelURI, { // modelURI에 있는 URI를 인자로 받아 모델을 로드함
           onProgress: (fractions) => {
             setLoading({ loading: true, progress: fractions }); // set loading fractions(모델 로딩 상황 표시)
           },
         }); // load model
 
         // warming up model(모델 처음 실행시 발생하는 지연 시간을 줄이는 역할)
-        const dummyInput = tf.ones(yolov5.inputs[0].shape);// tf. ones -> 모든 요소가 1인 텐서 생성, 모델의 첫 번째 입력 텐서의 모양 반환(dummy)
-        console.log("dummyInput's shape:", yolov5.inputs[0].shape)
-        await yolov5.executeAsync(dummyInput);// 더미 텐서 실행
-        // yolov5.execute(dummyInput);// 더미 텐서 실행
+        const dummyInput = tf.ones(yolov8.inputs[0].shape);// tf. ones -> 모든 요소가 1인 텐서 생성, 모델의 첫 번째 입력 텐서의 모양 반환(dummy)
+        console.log("dummyInput's shape:", yolov8.inputs[0].shape)
+        await yolov8.executeAsync(dummyInput);// 더미 텐서 실행
+        // yolov8.execute(dummyInput);// 더미 텐서 실행
         tf.dispose(dummyInput);// 텐서를 메모리에서 해제
 
         // set state(모델의 성공상태 Load)
-        setInputTensor(yolov5.inputs[0].shape); // 실제로 Load된 모델의 inputTensor 상태 업데이트
-        setModel(yolov5); // 실제로 Load 된 모델의 상태 업데이트
+        setInputTensor(yolov.inputs[0].shape); // 실제로 Load된 모델의 inputTensor 상태 업데이트
+        setModel(yolov8); // 실제로 Load 된 모델의 상태 업데이트
         setLoading({ loading: false, progress: 1 }); // loading이 끝났으므로 loading 상태를 false + progress의 상태를 완료된 상태인 1로 지정
       });
     })();
