@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as tf from "@tensorflow/tfjs";
 import "@tensorflow/tfjs-react-native";
 import { modelURI } from "./modelHandler";
+import { modelURIVgg16 } from "./modelHandler";
 import CameraView from "./CameraView";
 
 const App = () => {
@@ -29,7 +30,15 @@ const App = () => {
       }
 
       tf.ready().then(async () => {
+        // Load YOLOv8 model
         const yolov8 = await tf.loadGraphModel(modelURI, { // modelURI에 있는 URI를 인자로 받아 모델을 로드함
+          onProgress: (fractions) => {
+            setLoading({ loading: true, progress: fractions }); // set loading fractions(모델 로딩 상황 표시)
+          },
+        }); // load model
+
+        // Load VGG16 model
+        const vgg16 = await tf.loadGraphModel(modelURIVgg16, { // modelURI에 있는 URI를 인자로 받아 모델을 로드함
           onProgress: (fractions) => {
             setLoading({ loading: true, progress: fractions }); // set loading fractions(모델 로딩 상황 표시)
           },
@@ -43,8 +52,9 @@ const App = () => {
         tf.dispose(dummyInput);// 텐서를 메모리에서 해제
 
         // set state(모델의 성공상태 Load)
-        setInputTensor(yolov.inputs[0].shape); // 실제로 Load된 모델의 inputTensor 상태 업데이트
+        setInputTensor(yolov8.inputs[0].shape); // 실제로 Load된 모델의 inputTensor 상태 업데이트
         setModel(yolov8); // 실제로 Load 된 모델의 상태 업데이트
+        setModelVgg16(vgg16);
         setLoading({ loading: false, progress: 1 }); // loading이 끝났으므로 loading 상태를 false + progress의 상태를 완료된 상태인 1로 지정
       });
     })();
@@ -62,6 +72,7 @@ const App = () => {
                 <CameraView // 각각의 속성 값을 전달
                   type={type}
                   model={model}
+                  modelVgg16={modelVgg16}
                   inputTensorSize={inputTensor}
                   config={configurations}
                 >
