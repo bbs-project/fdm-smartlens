@@ -21,7 +21,7 @@ import { bundleResourceIO } from "@tensorflow/tfjs-react-native";
 // 모델 경로 설정: fdm-yolov8n
 const modelJson = require("../../assets/model/fdm-yolov8n/model.json");
 const modelWeights = [
-  require("../../assets/model/fdm-yolov8n/group1-shard1of3.bin"),
+ require("../../assets/model/fdm-yolov8n/group1-shard1of3.bin"),
   require("../../assets/model/fdm-yolov8n/group1-shard2of3.bin"),
   require("../../assets/model/fdm-yolov8n/group1-shard3of3.bin"),
 ];

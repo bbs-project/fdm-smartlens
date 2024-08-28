@@ -11,7 +11,7 @@ import { renderBoxes } from "../utils/renderBox";
 const TensorCamera = cameraWithTensors(Camera);
 
 const CameraView = ({ type, model, inputTensorSize, config, children }) => {
-  // console.log("CameraView enabled: type=", type, ", inputTensorSize=", inputTensorSize, ", config=", config);
+  //console.log("CameraView enabled: type=", type, ", inputTensorSize=", inputTensorSize, ", config=", config);
   const [ctx, setCTX] = useState(null);
   const typesMapper = { back: CameraType.back, front: CameraType.front };
 
@@ -39,7 +39,7 @@ const CameraView = ({ type, model, inputTensorSize, config, children }) => {
 
       tf.engine().startScope();
 
-      // const imageTensor = images.next().value;
+      //const imageTensor = images.next().value;
       const imageTensorObj = images.next();
       const imageTensor = imageTensorObj.value;
 
@@ -60,17 +60,47 @@ const CameraView = ({ type, model, inputTensorSize, config, children }) => {
         // console.log("input:", input)
 
         await model.executeAsync(input).then((res) => {
-          console.log("model.executeAsync() result:", res)
+          //console.log(res);
+          //console.log("model.executeAsync() result:", res)
 //          const [boxes, scores, classes] = res.slice(0, 3);
           const numDetections = res.shape[1];
+
+          //console.log(numDetections);
+
           const boxes = res.slice([0, 0, 0], [1, numDetections, 4]).squeeze(); // Extract bounding boxes
           const scores = res.slice([0, 0, 4], [1, numDetections, 1]).squeeze(); // Extract scores
           const classes = res.slice([0, 0, 5], [1, numDetections, 1]).squeeze(); // Extract classes
 
-          const boxesData = boxes.dataSync();
-          const scoresData = scores.dataSync();
-          const classesData = classes.dataSync();
+          //console.log("==============boxesData==============");
+          //console.log(boxes);
+          //console.log("==============scoresData==============")
+          //console.log(scores);
+          //console.log("==============classesData==============")
+          //console.log(classes);
+          
 
+
+          const boxesData = boxes.dataSync();
+          console.log("==============boxesData==============")
+          console.log(boxesData);
+          const scoresData = scores.dataSync();
+          console.log("==============scoresData==============")
+          console.log(scoresData);
+          const classesData = classes.dataSync();
+          console.log("==============classesData==============")
+          //const classesData = classes.argMax(-1).dataSync();
+          console.log(classesData);
+
+          /*const scoresData = scores.dataSync();
+const maxScoreIndex = scoresData.indexOf(Math.max(...scoresData));
+
+// 가장 큰 점수와 해당 인덱스를 기반으로 필요한 데이터 추출
+const maxScore = scoresData[maxScoreIndex];
+const boxesData = boxes.dataSync().slice(maxScoreIndex * 4, (maxScoreIndex + 1) * 4);
+const classesData = classes.dataSync()[maxScoreIndex];
+*/
+
+          //console.log(threshold);
           renderBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
           tf.dispose([res, input]);
         });
@@ -135,5 +165,7 @@ const CameraView = ({ type, model, inputTensorSize, config, children }) => {
     </>
   );
 };
+
+
 
 export default CameraView;
