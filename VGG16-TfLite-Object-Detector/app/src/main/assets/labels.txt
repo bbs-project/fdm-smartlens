@@ -1,0 +1,9 @@
+normal
+eye
+gill
+fin
+surface
+snout
+abdomen
+color
+other
