@@ -1,0 +1,135 @@
+스마트 렌즈 환경 구성 예시 
+
+- 모바일 기기용 AI 프로젝트 모음
+https://smilegate.ai/2021/03/19/awesome-tensorflow-lite/
+
+- AI 숫자 판별 앱(React)
+https://jongbeom-dev.tistory.com/101
+
+-안드로이드 app에 Yolov8 적용
+https://www.youtube.com/watch?v=dl7rCmvIyiI
+
+-React - Native에 Object Detection Model 적용 
+https://medium.com/simform-engineering/object-detection-in-react-native-c6858789dd6b
+
+
+-React-Native 카메라를 통한 Object Detection Model
+https://github.com/369geofreeman/Object-Detection-React-Native
+
+-React-Native를 이용한 tutorial 영상
+https://www.youtube.com/watch?v=iir0ezSvRLw
+
+- ML kit 적용?
+https://www.youtube.com/watch?v=ybiMSEjl5mA
+
+- reddit 여러 자료
+https://www.reddit.com/r/reactnative/comments/190zio3/how_to_create_real_time_object_detection_in_react/?rdt=33200
+
+-tensorflow lite 이용한 object classification
+https://blog.logrocket.com/build-object-classification-app-tensorflow-react-native/
+
+-mobilenet 이용한 object detection
+https://apps.theodo.com/article/how-to-recognize-real-time-object-in-reactnative-for-dummies
+
+-CoCo Ssd 적용
+https://github.com/btroia/react-native-image-recognition-object-detection?tab=readme-ov-file
+
+-react native에 사용자 정의 텐서플로우 모델 적용
+https://www.youtube.com/watch?v=pC7mCEHiYQw&t=12s
+
+-react native 텍스트 인식(React CLI 사용)
+https://www.youtube.com/watch?v=1ZbISHrgAnE
+
+-react native npm object-detector(React Native version 0.6)
+https://www.npmjs.com/package/react-native-object-detector?activeTab=readme
+
+-yolo v5 react native
+https://github.com/Hyuto/yolov5-tfjs-react-native
+
+-yolo v8 react native
+https://www.youtube.com/watch?v=KT0tUrY6JxM
+
+-react-native 에서 tensorflow.js 활용하기 tensor to image
+https://adjh54.tistory.com/236#google_vignette
+
+-mobilenet 사용
+https://www.comet.com/site/blog/image-classification-on-react-native-with-tensorflow-js-and-mobilenet/
+
+-realtime object detection in react-native(vision camera)
+https://github.com/jaroslawkrol/vision-camera-realtime-object-detection
+
+-vision camera react-native
+https://github.com/mrousavy/react-native-vision-camera
+
+-image picker object detection
+https://blog.logrocket.com/build-object-classification-app-tensorflow-react-native/
+
+-AVD 이용방법
+https://seunghyun.in/android/2/
+
+-yolov8 
+https://github.com/2wons/yolov8-tfjs-react-native/tree/main/assets
+
+- pb 모델 graph 모델로 convert
+https://dlarhkd1211.tistory.com/15
+
+- tensorflowjs wizard
+https://www.npmjs.com/package/@tensorflow/tfjs-converter
+
+- yolov8 apply issues
+https://github.com/ultralytics/ultralytics/issues/8361
+
+- rn-object-detection(임의 모델 사용)
+https://github.com/Pigrabbit/rn-object-detection/tree/main/assets
+
+- InteriorDesign (임의 모델 사용, tflite)
+https://github.com/QasimJaffry/InteriorDesign
+
+- Object-Detection-Mobile-ReactNative-Expo (모델 전환 가능?)
+https://github.com/bruce601080102/Object-Detection-Mobile-ReactNative-Expo?tab=readme-ov-file#%E5%84%AA%E9%BB%9E
+
+- react-native-tensorflow-object-detection(mobilenet을 graph-model로 전환하여 적용)
+https://github.com/fatihatac/react-native-tensorflow-object-detection
+
+- react-native-clash-of-clans-yolov5
+https://github.com/BurntBaseTeam/react-native-clash-of-clans-yolov5/tree/main
+
+- Object-detection ( tensorflowjs_wizard 이용해서 모델 변경한 사례)
+https://github.com/jameslimjy/Object-detection/tree/main
+
+- How to deploy your custom tensorflow model to react native(유튜브 영상)
+https://www.youtube.com/watch?v=pC7mCEHiYQw&t=551s
+
+- react native 모델 불러오기
+https://adjh54.tistory.com/236#google_vignette
+
+- react native onnx 방식 적용
+https://adjh54.tistory.com/205
+
+- 얼굴 인식(tensorflowwithcamera)
+https://adjh54.tistory.com/28#google_vignette
+
+- vgg16 reactnative 적용(brain-tumor detect)
+https://github.com/debjitpurohit/BrainTumor_Classification_Native_App/blob/master/README.md
+
+- android emulator 실시간 카메라에 원하는 이미지 넣기
+https://stackoverflow.com/questions/13818389/android-emulator-camera-custom-image
+
+- yolo 커스텀 데이터 학습 방법
+https://velog.io/@choonsik_mom/YOLO-Detector-%EC%BB%A4%EC%8A%A4%ED%85%80-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%85%8B-%ED%9B%88%EB%A0%A8%ED%95%98%EA%B8%B0
+
+- reactnative 모델 적용방법
+https://github.com/ohyicong/masksdetection-react-native-app/blob/master/App.js
+https://www.youtube.com/watch?v=pC7mCEHiYQw
+
+- 노트북 파일과 함께 react native
+https://www.youtube.com/watch?v=wnzThFAkgTk
+
+- reactnative yolo issue들 (중요 확인)
+https://github.com/ultralytics/ultralytics/issues/2950
+
+- kotlin yolov8
+https://github.com/surendramaran/YOLOv8-TfLite-Object-Detector
+
+- yolov8 android  적용(kotlin)
+https://rockyshikoku.medium.com/using-yolov8-object-detection-model-on-android-18e51a519ba8
