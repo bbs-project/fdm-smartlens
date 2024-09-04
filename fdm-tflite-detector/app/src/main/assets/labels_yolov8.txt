@@ -1,0 +1,5 @@
+Bleeding
+Corrosion
+Tumor
+Ulcer
+eyesSymptom
