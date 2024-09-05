@@ -37,33 +37,42 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
 
     private lateinit var cameraExecutor: ExecutorService // 비동기 작업 처리를 위한 'ExecutorService'
 
+    // Main entrance of this app: called when this main activity is created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater) // 데이터 바인딩을 사용해 UI 설정
+
+        // Create primary layout (UI) for this activity using data binding
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        cameraExecutor = Executors.newSingleThreadExecutor() // 카메라 관련 작업 처리 단일 스레드 실행
-
+        // Create single thread executor for processing camera-related operations
+        cameraExecutor = Executors.newSingleThreadExecutor()
         cameraExecutor.execute {
-            detector = Detector(baseContext, MODEL_YOLOV8_PATH, LABELS_YOLOV8_PATH, MODEL_VGG16_PATH, LABELS_VGG16_PATH, this) // 모델과 레이블 파일 로드
+            // Create a detector instance
+            detector = Detector(baseContext, MODEL_YOLOV8_PATH, LABELS_YOLOV8_PATH, MODEL_VGG16_PATH, LABELS_VGG16_PATH, this)
         }
 
+        // Check if all required permissions are granted, if not, request them
         if (allPermissionsGranted()) {
             startCamera()
         } else {
+            // Request all required permissions
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
         bindListeners()
     }
 
-    // UI 요소에 이벤트 리스너 설정
+    // Bind event listeners for UI elements
     private fun bindListeners() {
         binding.apply {
-            isGpu.setOnCheckedChangeListener { buttonView, isChecked -> // GPU 사용 여부
+            // Bind listener for GPU switch button
+            isGpu.setOnCheckedChangeListener { buttonView, isChecked ->
                 cameraExecutor.submit {
                     detector?.restart(isGpu = isChecked)
                 }
+
+                // If GPU is enabled, change the button color to orange, or gray otherwise
                 if (isChecked) {
                     buttonView.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.orange))
                 } else {
@@ -73,10 +82,12 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         }
     }
 
-    // 카메라 초기화
+    // Start the camera preview
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this) // 카메라 provider을 비동기로 가져옴
-        cameraProviderFuture.addListener({ // 카메라 provider가 준비되면 bindCameraUseCases()를 호출하여 카메라 사용 설정
+        // 카메라 provider을 비동기로 가져옴
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        // 카메라 provider가 준비되면 bindCameraUseCases()를 호출하여 카메라 사용 설정
+        cameraProviderFuture.addListener({
             cameraProvider  = cameraProviderFuture.get()
             bindCameraUseCases() // 카메라 미리보기, 이미지 분석 설정
         }, ContextCompat.getMainExecutor(this))
@@ -98,14 +109,16 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
             .setTargetRotation(rotation)
             .build()
 
-        imageAnalyzer = ImageAnalysis.Builder() // 이미지 분석 기능 설정, 가장 최신의 이미지만 처리하도록 'STRATEGY_KEEP_ONLY_LATEST' 사용
+        // 이미지 분석 기능 설정, 가장 최신의 이미지만 처리하도록 'STRATEGY_KEEP_ONLY_LATEST' 사용
+        imageAnalyzer = ImageAnalysis.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setTargetRotation(binding.viewFinder.display.rotation)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
 
-        imageAnalyzer?.setAnalyzer(cameraExecutor) { imageProxy -> // 분석 실행마다 비트맵 생성, 필요 시 회전 또는 좌우 반전 적용
+        // 분석 실행마다 비트맵 생성, 필요 시 회전 또는 좌우 반전 적용
+        imageAnalyzer?.setAnalyzer(cameraExecutor) { imageProxy ->
             val bitmapBuffer =
                 Bitmap.createBitmap(
                     imageProxy.width,
@@ -136,7 +149,8 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
             detector?.detect(rotatedBitmap)
         }
 
-        cameraProvider.unbindAll() // 기존 바인딩된 모든 사용 사례 해제( 리소스 확보 )
+        // 기존 바인딩된 모든 사용 사례 해제( 리소스 확보 )
+        cameraProvider.unbindAll()
 
         try {
             camera = cameraProvider.bindToLifecycle(
@@ -185,13 +199,15 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         ).toTypedArray()
     }
 
-    override fun onEmptyDetect() { // 감지된 객체가 없을 때 호출, 오버레이 지우는 역할
+    // 감지된 객체가 없을 때 호출, 오버레이 지우는 역할
+    override fun onEmptyDetect() {
         runOnUiThread {
             binding.overlay.clear()
         }
     }
 
-    override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) { // 감지된 객체가 있을 때 호출, 감지된 박스를 오버레이 표시, 추론 시간 업데이트
+    // 감지된 객체가 있을 때 호출, 감지된 박스를 오버레이 표시, 추론 시간 업데이트
+    override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
         runOnUiThread {
             binding.inferenceTime.text = "${inferenceTime}ms"
             binding.overlay.apply {

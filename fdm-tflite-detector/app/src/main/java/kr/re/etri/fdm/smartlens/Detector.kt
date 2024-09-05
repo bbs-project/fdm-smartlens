@@ -23,7 +23,7 @@ import java.nio.ByteOrder
 
 
 class Detector(
-    // 클래스 변수
+    // Declare class variables
     private val context: Context, // Android 컨텍스트
     private val modelYolov8Path: String, // YOLOv8 모델 파일 경로
     private val labelYolov8Path: String, // YOLOv8 레이블 파일 경로
@@ -32,31 +32,34 @@ class Detector(
     private val detectorListener: DetectorListener, // 감지 결과를 받을 리스너
 ) {
 
-    private var interpreter_Y: Interpreter // TensorFlow Lite 'Interpreter' 객체 저장
-    private var interpreter_V: Interpreter // TensorFlow Lite 'Interpreter' 객체 저장
-    private var labels_Y = mutableListOf<String>() // 레이블 저장할 'labels'
-    private var labels_V = mutableListOf<String>() // 레이블 저장할 'labels'
+    private var interpreterYolo: Interpreter // TensorFlow Lite 'Interpreter' 객체 저장
+    private var interpreterVgg: Interpreter // TensorFlow Lite 'Interpreter' 객체 저장
+    private var labelsYolo = mutableListOf<String>() // 레이블 저장할 'labels'
+    private var labelsVgg = mutableListOf<String>() // 레이블 저장할 'labels'
 
+    // These 4 variables are for YOLOv8 model
     private var tensorWidth = 0 // 텐서 너비
     private var tensorHeight = 0 // 텐서 높이
     private var numChannel = 0 // 채널 수
     private var numElements = 0 // 요소 수
 
-    private val imageProcessor = ImageProcessor.Builder() // 입력 이미지의 전처리 담당 객체
+    private val imageProcessorYolo = ImageProcessor.Builder() // 입력 이미지의 전처리 담당 객체
         .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION)) // 정규화
         .add(CastOp(INPUT_IMAGE_TYPE)) // 타입 변환
         .build()
 
     // VGG16: Input tensor shape: 1 x 112 x 112 x 3
-    private val imageProcessor_V = ImageProcessor.Builder() // 입력 이미지의 전처리 담당 객체
+    private val imageProcessorVgg = ImageProcessor.Builder() // 입력 이미지의 전처리 담당 객체
         .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION)) // 정규화
         .add(CastOp(INPUT_IMAGE_TYPE)) // 타입 변환
         .add(ResizeOp(112, 112, ResizeOp.ResizeMethod.BILINEAR)) // 이미지 크기 조정
         //.add(ResizeOp(224, 224, ResizeOp.ResizeMethod.BILINEAR)) // 이미지 크기 조정
         .build()
 
-    init { // 초기화 블록
-        val compatList = CompatibilityList() // 장치의 gpu 호환성 체크, 지원되는 경우 gpu 딜리게이트 추가
+    // code block for initialization of the model
+    init {
+        // 장치의 GPU 호환성 체크, 지원되는 경우 GpuDelegate 추가
+        val compatList = CompatibilityList()
 
         val options = Interpreter.Options().apply{
             if(compatList.isDelegateSupportedOnThisDevice){
@@ -67,15 +70,13 @@ class Detector(
             }
         }
 
-        val model_Y = FileUtil.loadMappedFile(context, modelYolov8Path) // YOLOv8 model load
-        val model_V = FileUtil.loadMappedFile(context, modelVgg16Path) // VGG16 model load
-        // Interpreter는 input 과 output 의 형태를 알려주는 역할(임의 해석)
-        interpreter_Y = Interpreter(model_Y, options)
-        // Interpreter는 input 과 output 의 형태를 알려주는 역할(임의 해석)
-        interpreter_V = Interpreter(model_V, options)
+        // Load interpreters for YOLOv8 and VGG16
+        interpreterYolo = loadInterpreter(options, modelYolov8Path, labelYolov8Path, labelsYolo)
+        interpreterVgg = loadInterpreter(options, modelVgg16Path, labelVgg16Path, labelsVgg)
 
-        val inputShape = interpreter_Y.getInputTensor(0)?.shape() // input tensor shape
-        val outputShape = interpreter_Y.getOutputTensor(0)?.shape() // output tensor shape
+        // Get input and output tensor details
+        val inputShape = interpreterYolo.getInputTensor(0)?.shape() // input tensor shape
+        val outputShape = interpreterYolo.getOutputTensor(0)?.shape() // output tensor shape
 
         if (inputShape != null) {
             tensorWidth = inputShape[1]
@@ -92,32 +93,23 @@ class Detector(
             numChannel = outputShape[1]
             numElements = outputShape[2]
         }
+    }
 
-        // Load labels for YOLOv8
-        try {
-            val inputStream: InputStream = context.assets.open(labelYolov8Path)
-            val reader = BufferedReader(InputStreamReader(inputStream))
-
-            var line: String? = reader.readLine()
-            while (line != null && line != "") {
-                labels_Y.add(line)
-                line = reader.readLine()
-            }
-
-            reader.close()
-            inputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+    private fun loadInterpreter(options: Interpreter.Options, modelPath: String, labelPath: String, labels: MutableList<String>): Interpreter {
+        // Load model file from the assets folder
+        val model = FileUtil.loadMappedFile(context, modelPath)
+        // Interpreter represents a generic, compiled ML model: YOLOv8
+        // We can run inference (VGG16) and object detection (YOLOv8) using the Interpreter's run() method
+        val interpreter = Interpreter(model, options)
 
         // Load labels for VGG16
         try {
-            val inputStream: InputStream = context.assets.open(labelVgg16Path)
+            val inputStream: InputStream = context.assets.open(labelPath)
             val reader = BufferedReader(InputStreamReader(inputStream))
 
             var line: String? = reader.readLine()
             while (line != null && line != "") {
-                labels_V.add(line)
+                labels.add(line)
                 line = reader.readLine()
             }
 
@@ -126,12 +118,13 @@ class Detector(
         } catch (e: IOException) {
             e.printStackTrace()
         }
+        return interpreter
     }
 
     // Define what to do when the App restarts
     fun restart(isGpu: Boolean) {
-        interpreter_Y.close()
-        interpreter_V.close()
+        interpreterYolo.close()
+        interpreterVgg.close()
 
         val options = if (isGpu) {
             val compatList = CompatibilityList()
@@ -150,16 +143,16 @@ class Detector(
         }
 
         // Load models and creates interpreter objects for the loaded models
-        val model_Y = FileUtil.loadMappedFile(context, modelYolov8Path)
-        interpreter_Y = Interpreter(model_Y, options)
+        val modelYolo = FileUtil.loadMappedFile(context, modelYolov8Path)
+        interpreterYolo = Interpreter(modelYolo, options)
 
-        val model_V = FileUtil.loadMappedFile(context, modelVgg16Path)
-        interpreter_V = Interpreter(model_V, options)
+        val modelVgg = FileUtil.loadMappedFile(context, modelVgg16Path)
+        interpreterVgg = Interpreter(modelVgg, options)
     }
 
     fun close() {
-        interpreter_Y.close()
-        interpreter_V.close()
+        interpreterYolo.close()
+        interpreterVgg.close()
     }
 
     fun detect(frame: Bitmap) {
@@ -169,98 +162,127 @@ class Detector(
         if (numChannel == 0) return
         if (numElements == 0) return
 
-        // 현재 시간 기록( 추론이 얼마나 걸리는지 측정 )
+        // 추론이 얼마나 걸리는지 측정하기 위해 현재 시간 기록
         var inferenceTime = SystemClock.uptimeMillis()
 
-        // 입력 이미지를 모델이 요구하는 크기로 조정
-        val resizedBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
+        // -----------------------------------------------------------------------------------------
+        // YOLO 모델 예측 결과를 기반으로 신뢰도가 높은 검출 박스를 선택
+        val yoloBestBoxes = detectYOLO(frame)
 
-        // 이미지를 모델의 입력 형식으로 변환하고, 전처리 수행
-        val tensorImage = TensorImage(INPUT_IMAGE_TYPE) // 입력 이미지 타입 지정한 텐서 이미지 생성
-        tensorImage.load(resizedBitmap) // 조정된 이미지를 'tensorImage' 객체에 로드
-        // 이미지 정규화하고 타입을 변환(CastOp), 학습된 모델이 기대하는 형식으로 이미지 준비
-        val processedImage = imageProcessor.process(tensorImage)
-        // 전처리된 이미지 데이터를 버퍼로 가져옴
-        val imageBuffer = processedImage.buffer
-
-        // 모델에 전처리된 이미지를 입력으로 주고 추론 수행
-        // 모델 출력 형식과 크기에 맞는 고정된 크기의 텐서 버퍼 생성( 3차원 배열, 1 x numChannel x num Elements )
-        val output = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
-        // 전처리된 이미지 버퍼를 모델에 입력으로 제공, 모델 예측 결과를 output.buffer에 저장
-        interpreter_Y.run(imageBuffer, output.buffer)
-
-        // 추론 결과로부터 가장 신뢰도 높은 객체를 선택하고, 추론 시간을 측정
-        val bestBoxes  = bestBox(output.floatArray) // 모델 예측 결과를 기반으로 신뢰도가 높은 검출 박스를 선택
-
-        // 감지된 객체가 없는 경우 onEmptyDetect() 호출
-        if (bestBoxes == null) {
+        // YOLO 모델에서 감지된 객체가 없는 경우 onEmptyDetect() 호출
+        if (yoloBestBoxes == null) {
             detectorListener.onEmptyDetect()
             return
         }
 
-        // Print the size of the output tensor
-        //println("YOLO: Input tensor capacity: ${processedImage.buffer.capacity()}, size: ${processedImage.buffer.limit()}")
-        //println("YOLO: Output tensor capacity: ${output.buffer.capacity()}")
-        val inputTensor_Y = interpreter_Y.getInputTensor(0)
-        val shape_Y = inputTensor_Y.shape()
-        // println("YOLO: Input tensor shape: ${shape_Y[0]} x ${shape_Y[1]} x ${shape_Y[2]} x ${shape_Y[3]}")
-
-        // -----------------------------------------------------------------------------------------
-        // If we detected something from this image, run VGG16 interpreter for this image also
-        // Resize the frame to 112x112
-        val resizedBitmap_V = Bitmap.createScaledBitmap(frame, 112, 112, false)
-        // Create a TensorImage from the resized bitmap
-        val tensorImage_V = TensorImage(INPUT_IMAGE_TYPE).apply { load(resizedBitmap_V) }
-        // Preprocess the tensor image using the imageProcessor
-        val processedImage_V = imageProcessor_V.process(tensorImage_V)
-        // Create a TensorBuffer with the same shape as the output tensor
-        val output_V = TensorBuffer.createFixedSize(intArrayOf(1, 7), OUTPUT_IMAGE_TYPE)
-        // val output_V = TensorBuffer.createFixedSize(intArrayOf(1, 112, 112, 3), DataType.UINT8)
-        // val output_V = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
-
-        //println("VGG16: Input tensor capacity: ${processedImage_V.buffer.capacity()}, size: ${processedImage.buffer.limit()}")
-        //println("VGG16: Output tensor capacity: ${output_V.buffer.capacity()}")
-        val inputTensor_V = interpreter_V.getInputTensor(0)
-        val shape_V = inputTensor_V.shape()
-        println("VGG16: Input tensor shape: ${shape_V[0]} x ${shape_V[1]} x ${shape_V[2]} x ${shape_V[3]}")
-
-        //interpreter_V.run(processedImage_V.buffer, output_V.buffer)
-        interpreter_V.run(convertBitmapToByteBuffer(frame), output_V.buffer)
-
-        val confidences = output_V.floatArray
-        // println("VGG16: confidences: ${confidences.size}")
-        print("VGG16: confidences=[ ")
-        for (confidence in confidences) {
-            print("$confidence ")
-        }
-        println("]")
-
-        val maxIdx = confidences.indices.maxByOrNull { confidences[it] } ?: -1
-        val maxConfidence = confidences[maxIdx]
-        val detectedClassName = labels_V.getOrNull(maxIdx) ?: "Unknown"
-        println("VGG16: maxIdx: $maxIdx, maxConfidence: $maxConfidence, detectedClassName: $detectedClassName")
-
-        val boundingBox_V = BoundingBox(
-            x1 = 0f, y1 = 0f, x2 = 1f, y2 = 1f,
-            cx = 0.5f, cy = 0.5f, w = 1f, h = 1f,
-            cnf = maxConfidence, cls = maxIdx, clsName = detectedClassName
-        )
+        // VGG16 모델 예측 결과를 기반으로 검출 결과를 나타내는 박스 생성
+        val vggBox = detectVGG(frame)
 
         val allBoxes: MutableList<BoundingBox> = ArrayList()
-        if (bestBoxes != null) {
-            allBoxes.addAll(bestBoxes)
-        }
-        allBoxes.add(boundingBox_V)
+        //if (bestBoxes != null) {
+            allBoxes.addAll(yoloBestBoxes)
+        //}
+        allBoxes.add(vggBox)
         // -----------------------------------------------------------------------------------------
 
         // 현재 시간에서 시작 시간을 빼서 추론 소요 시간 계산
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
 
         // 감지된 객체가 있는 경우 감지된 박스 리스트와 추론 시간을 전달
-        // detectorListener.onDetect(bestBoxes, inferenceTime)
         detectorListener.onDetect(allBoxes, inferenceTime)
     }
 
+    /**
+     * Detect objects in the input image using YOLOv8 model.
+     * - YOLOv8's Input Tensor Shape: 1 x 640 x 640 x 3
+     * - YOLOv8's Output Tensor Shape: 1 x 9 x 8400
+     */
+    private fun detectYOLO(frame: Bitmap): List<BoundingBox>? {
+        // 입력 이미지를 모델이 요구하는 크기로 조정
+        val inputBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
+
+        // 이미지를 모델의 입력 형식으로 변환하고, 전처리 수행
+        val tensorImage = TensorImage(INPUT_IMAGE_TYPE) // 입력 이미지 타입 지정한 텐서 이미지 생성
+        tensorImage.load(inputBitmap) // 조정된 이미지를 'tensorImage' 객체에 로드
+        // 이미지 정규화하고 타입을 변환(CastOp), 학습된 모델이 기대하는 형식으로 이미지 준비
+        val processedImage = imageProcessorYolo.process(tensorImage)
+
+        // 모델에 전처리된 이미지를 입력으로 주고 추론 수행
+        // 모델 출력 형식과 크기에 맞는 고정된 크기의 텐서 버퍼 생성( 3차원 배열, 1 x numChannel x numElements )
+        val tensorBuffer = TensorBuffer.createFixedSize(intArrayOf(1, numChannel, numElements), OUTPUT_IMAGE_TYPE)
+        // 전처리된 이미지 버퍼를 모델에 입력으로 제공, 모델 예측 결과를 tensorBuffer.buffer에 저장
+        interpreterYolo.run(processedImage.buffer, tensorBuffer.buffer)
+
+        // 추론 결과로부터 가장 신뢰도 높은 객체를 선택하고, 추론 시간을 측정
+        val bestBoxes = bestBox(tensorBuffer.floatArray)
+
+        // Print the size of the output tensor
+        // println("YOLO: Input tensor capacity: ${processedImage.buffer.capacity()}, size: ${processedImage.buffer.limit()}")
+        // println("YOLO: Output tensor capacity: ${tensorBuffer.buffer.capacity()}")
+
+        val inputTensorY = interpreterYolo.getInputTensor(0)
+        val inputShape = inputTensorY.shape()
+        // println("YOLO: Input tensor shape: ${inputShape[0]} x ${inputShape[1]} x ${inputShape[2]} x ${inputShape[3]}")
+
+        val outputTensorY = interpreterYolo.getOutputTensor(0)
+        val outputShape = outputTensorY.shape()
+        // println("YOLO: Output tensor shape: ${outputShape[0]} x ${outputShape[1]} x ${outputShape[2]} x ${outputShape[3]}")
+
+        return bestBoxes
+    }
+
+    /**
+     * If YOLO interpreter detected something from this image, run VGG16 interpreter for this image
+     * also to find disease name.
+     * - VGG16's Input Tensor Shape: 1 x 112 x 112 x 3
+     * - VGG16's Output Tensor Shape: 1 x 7
+     */
+    private fun detectVGG(frame: Bitmap): BoundingBox {
+        // Resize the frame from Camera to 112x112
+        val inputBitmap = Bitmap.createScaledBitmap(frame, 112, 112, false)
+        // Create a TensorImage from the resized bitmap
+        val inputTensor = TensorImage(INPUT_IMAGE_TYPE).apply { load(inputBitmap) }
+
+        // Preprocess the tensor image using the imageProcessor
+        // 이미지 정규화하고 타입을 변환(CastOp), 학습된 모델이 기대하는 형식으로 이미지 준비
+        val processedImage = imageProcessorVgg.process(inputTensor)
+        // Create a TensorBuffer (Bitmap) with the same shape as the output tensor
+        val tensorBuffer = TensorBuffer.createFixedSize(intArrayOf(1, 7), OUTPUT_IMAGE_TYPE)
+
+        //println("VGG16: Input tensor capacity: ${inputTensor.buffer.capacity()}, size: ${inputTensor.buffer.limit()}")
+        //println("VGG16: Output tensor capacity: ${outputTensor.buffer.capacity()}")
+        val inputTensorV = interpreterVgg.getInputTensor(0)
+        val inputShape = inputTensorV.shape()
+        // println("VGG16: Input tensor shape: ${inputShape[0]} x ${inputShape[1]} x ${inputShape[2]} x ${inputShape[3]}")
+
+        val outputTensorV = interpreterVgg.getOutputTensor(0)
+        val outputShape = outputTensorV.shape()
+        // println("VGG16: Output tensor shape: ${outputShape[0]} x ${outputShape[1]} x ${outputShape[2]} x ${outputShape[3]}")
+
+        interpreterVgg.run(convertBitmapToByteBuffer(frame), tensorBuffer.buffer)
+        // interpreter_V.run(processedImage_V.buffer, output_V.buffer)
+
+        val confidences = tensorBuffer.floatArray
+        print("VGG16: confidences=[ ")
+        for (confidence in confidences) {
+            print("$confidence ")
+        }
+        println("]")
+
+        val maxIndex = confidences.indices.maxByOrNull { confidences[it] } ?: -1
+        val maxConfidence = confidences[maxIndex]
+        val detectedClassName = labelsVgg.getOrNull(maxIndex) ?: "Unknown"
+        println("VGG16: maxIndex: [$maxIndex], maxConfidence: $maxConfidence, detectedClassName: $detectedClassName")
+
+        val boundingBox = BoundingBox(
+            x1 = 0f, y1 = 0f, x2 = 1f, y2 = 1f,
+            cx = 0.5f, cy = 0.5f, w = 1f, h = 1f,
+            cnf = maxConfidence, cls = maxIndex, clsName = detectedClassName
+        )
+        return boundingBox
+    }
+
+    // Convert VGG16 input bitmap to ByteBuffer
     private fun convertBitmapToByteBuffer(bp: Bitmap): ByteBuffer {
         val imgData = ByteBuffer.allocateDirect(java.lang.Float.BYTES * 112 * 112 * 3)
         // val imgData = ByteBuffer.allocateDirect(224 * 224 * 3)
@@ -283,13 +305,16 @@ class Detector(
         return imgData
     }
 
+    // Find best boxes with best confidence from the output tensor
     private fun bestBox(array: FloatArray) : List<BoundingBox>? {
-
-        val boundingBoxes = mutableListOf<BoundingBox>() // 검출 객체 정보 저장 리스트 초기화
+        // 검출 객체 정보 저장 리스트 초기화
+        val boundingBoxes = mutableListOf<BoundingBox>()
 
         // 모델 출력 배열에서 각 객체의 정보를 읽고 신뢰도 계산
-        for (c in 0 until numElements) { // numElements까지 반복하여 객체 정보 순회
-            var maxConf = CONFIDENCE_THRESHOLD // 현재 객체의 최대 신뢰도 저장 변수 ( 초기값은 미리 설정된 임계값 )
+        // numElements까지 반복하여 객체 정보 순회
+        for (c in 0 until numElements) {
+            // 현재 객체의 최대 신뢰도 저장 변수 ( 초기값은 미리 설정된 임계값 )
+            var maxConf = CONFIDENCE_THRESHOLD
             var maxIdx = -1 // 최대 신뢰도 갖는 클래스의 인덱스 저장
             var j = 4 // cx, cy, w, h 총 4개
             var arrayIdx = c + numElements * j // 클래스 신뢰도 정보를 가리키는 인덱스 계산
@@ -304,7 +329,7 @@ class Detector(
 
             // 신뢰도가 높은 객체 필터링
             if (maxConf > CONFIDENCE_THRESHOLD) {// 신뢰도 낮은 객체 제외
-                val clsName = labels_Y[maxIdx] // 해당 객체의 클래스 이름 가져옴
+                val clsName = labelsYolo[maxIdx] // 해당 객체의 클래스 이름 가져옴
                 val cx = array[c] // 0, 객체 중심 좌표 x
                 val cy = array[c + numElements] // 1, 객체 중심 좌표 y
                 val w = array[c + numElements * 2] // 너비
@@ -329,7 +354,9 @@ class Detector(
             }
         }
 
-        if (boundingBoxes.isEmpty()) return null
+        if (boundingBoxes.isEmpty()) {
+            return null
+        }
 
         // 검출된 결과에 대해서 비최대 억제법(NMS)를 적용하여 중복 박스를 제거한다.
         val selectedBoxes = applyNMS(boundingBoxes)
@@ -338,26 +365,32 @@ class Detector(
 
     // 비최대 억제법(Non-Maximum Suppression)을 적용하여 검출된 객체의 중복 제거, 신뢰도 높은 객체만 남김
     private fun applyNMS(boxes: List<BoundingBox>) : MutableList<BoundingBox> {
-        val sortedBoxes = boxes.sortedByDescending { it.cnf }.toMutableList() // 검출된 박스들을 신뢰도에 따라 내림차순으로 정렬( 신뢰도가 높은 박스가 리스트 앞쪽에 오도록 정렬 )
-        val selectedBoxes = mutableListOf<BoundingBox>() // NMS 적용 후 남겨진 최종적으로 선택된 박스를 저장할 리스트 초기화
+        // 검출된 박스들을 신뢰도에 따라 내림차순으로 정렬 (신뢰도가 높은 박스가 리스트 앞쪽에 오도록 정렬)
+        val sortedBoxes = boxes.sortedByDescending { it.cnf }.toMutableList()
+        // NMS 적용 후 남겨진 최종적으로 선택된 박스를 저장할 리스트 초기화
+        val selectedBoxes = mutableListOf<BoundingBox>()
 
         while(sortedBoxes.isNotEmpty()) {
-            val first = sortedBoxes.first() // first는 현재 가장 신뢰도가 높은 박스를 나타냄, 이는 sortedBoxes의 첫 번째 요소가 됨
+            // first는 현재 가장 신뢰도가 높은 박스를 나타냄, 이는 sortedBoxes의 첫 번째 요소가 됨
+            val first = sortedBoxes.first()
             selectedBoxes.add(first) // 가장 신뢰도 높은 박스를 선택된 리스트 추가
             sortedBoxes.remove(first) // 선택된 박스를 후보 리스트에서 제거
 
             // 중복 박스 제거
             val iterator = sortedBoxes.iterator()
-            while (iterator.hasNext()) { // sortedBoxes 순회
+            // sortedBoxes 순회
+            while (iterator.hasNext()) {
                 val nextBox = iterator.next() // 현재 비교 대상이 되는 박스
                 val iou = calculateIoU(first, nextBox) // 두 박스 간의 IoU를 계산하는 함수
-                if (iou >= IOU_THRESHOLD) { // IOU_THRESHOLD를 넘으면 박스가 겹친다는 의미 -> remove를 통해 제거
+                // IOU_THRESHOLD를 넘으면 박스가 겹친다는 의미 -> remove를 통해 제거
+                if (iou >= IOU_THRESHOLD) {
                     iterator.remove()
                 }
             }
         }
 
-        return selectedBoxes // 중복된 박스 제거, 신뢰도 높은 박스만 return
+        // 중복된 박스 제거, 신뢰도 높은 박스만 return
+        return selectedBoxes
     }
 
     // IoU 계산 ( IoU는 두 박스가 얼마나 겹치는지 측정 지표, 0~1 값을 가짐)
