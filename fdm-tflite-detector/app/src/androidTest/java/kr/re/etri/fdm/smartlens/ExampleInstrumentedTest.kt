@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.surendramaran.yolov8tflite", appContext.packageName)
+        assertEquals("kr.re.etri.fdm.smartlens", appContext.packageName)
     }
 }
