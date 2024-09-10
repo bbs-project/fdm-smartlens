@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 
-// 감지된 객체 결과 화면에 표시하는 뷰
+// Displays the detected objects on the screen
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private var results = listOf<BoundingBox>() // 감지된 객체 리스트
@@ -33,7 +33,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         initPaints()
     }
 
-    // 'Paint' 객체들의 속성 초기화하여 텍스트와 박스의 스타일 설정
+    // Initialize 'Paint' objects to specify text and box styles
     private fun initPaints() {
         textBackgroundPaint.color = Color.BLACK
         textBackgroundPaint.style = Paint.Style.FILL
@@ -59,7 +59,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
             canvas.drawRect(left, top, right, bottom, boxPaint)
 
-            // 객체의 클래스 이름과 확률을 하나의 문자열로 생성
+            // Create a string with the class name and probability of the detected object
             val drawableText = "${it.clsName} ${(it.cnf * 100).toInt()}%" // E.g. "Ulcer 99%"
             // val drawableText = it.clsName
 
