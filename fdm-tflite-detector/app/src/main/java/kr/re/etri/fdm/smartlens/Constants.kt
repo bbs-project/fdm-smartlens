@@ -7,6 +7,8 @@ object Constants {
     const val LABELS_YOLOV8_PATH = "labels_yolov8.txt"
 
     // Models and labels for VGG16 model
-    const val MODEL_VGG16_PATH = "fdm_vgg16.tflite"
+    //const val MODEL_VGG16_PATH = "fdm_vgg16.tflite" // non-quantized model
+    //const val MODEL_VGG16_PATH = "fdm_vgg16_dynrange.tflite" // dynamic range quantized model
+    const val MODEL_VGG16_PATH = "fdm_vgg16_float16.tflite" // float16 quantized model
     const val LABELS_VGG16_PATH = "labels_vgg16.txt"
 }

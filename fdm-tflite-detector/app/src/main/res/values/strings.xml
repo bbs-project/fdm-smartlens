@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">FDM-SmartLens</string>
     <string name="gpu">GPU</string>
+    <string name="cpu">CPU</string>
 </resources>

@@ -207,9 +207,12 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
     }
 
     // 감지된 객체가 있을 때 호출, 감지된 박스를 오버레이 표시, 추론 시간 업데이트
-    override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
+    override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTimeYOLO: Long, inferenceTimeVGG: Long) {
         runOnUiThread {
-            binding.inferenceTime.text = "${inferenceTime}ms"
+            val inferenceTime = inferenceTimeYOLO + inferenceTimeVGG
+            binding.inferenceTimeYOLO.text = "Y=${inferenceTimeYOLO}ms"
+            binding.inferenceTimeVGG .text = "V=${inferenceTimeVGG}ms"
+            binding.inferenceTime.text = "=> ${inferenceTime}ms"
             binding.overlay.apply {
                 setResults(boundingBoxes)
                 invalidate()

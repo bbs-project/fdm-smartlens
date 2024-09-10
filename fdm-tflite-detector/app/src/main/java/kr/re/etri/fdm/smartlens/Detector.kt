@@ -25,9 +25,9 @@ import java.nio.ByteOrder
 class Detector(
     // Declare class variables
     private val context: Context, // Android 컨텍스트
-    private val modelYolov8Path: String, // YOLOv8 모델 파일 경로
+    private val modelYoloPath: String, // YOLOv8 모델 파일 경로
     private val labelYolov8Path: String, // YOLOv8 레이블 파일 경로
-    private val modelVgg16Path: String, // YOLOv8 모델 파일 경로
+    private val modelVggPath: String, // YOLOv8 모델 파일 경로
     private val labelVgg16Path: String, // YOLOv8 레이블 파일 경로
     private val detectorListener: DetectorListener, // 감지 결과를 받을 리스너
 ) {
@@ -43,36 +43,31 @@ class Detector(
     private var numChannel = 0 // 채널 수
     private var numElements = 0 // 요소 수
 
-    private val imageProcessorYolo = ImageProcessor.Builder() // 입력 이미지의 전처리 담당 객체
-        .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION)) // 정규화
-        .add(CastOp(INPUT_IMAGE_TYPE)) // 타입 변환
+    // Preprocess image for YOLOv8 model
+    private val imageProcessorYolo = ImageProcessor.Builder()
+        .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION)) // Normalize input image to [-1, 1]
+        .add(CastOp(INPUT_IMAGE_TYPE)) // Cast image type to float
         .build()
 
-    // VGG16: Input tensor shape: 1 x 112 x 112 x 3
-    private val imageProcessorVgg = ImageProcessor.Builder() // 입력 이미지의 전처리 담당 객체
-        .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION)) // 정규화
-        .add(CastOp(INPUT_IMAGE_TYPE)) // 타입 변환
-        .add(ResizeOp(112, 112, ResizeOp.ResizeMethod.BILINEAR)) // 이미지 크기 조정
-        //.add(ResizeOp(224, 224, ResizeOp.ResizeMethod.BILINEAR)) // 이미지 크기 조정
+    // Preprocess image for VGG16 model
+    // - Input tensor shape: 1 x 112 x 112 x 3
+    private val imageProcessorVgg = ImageProcessor.Builder()
+        .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION)) // Normalized input image to [-1, 1]
+        .add(CastOp(INPUT_IMAGE_TYPE)) // Cast image type to float
+        .add(ResizeOp(112, 112, ResizeOp.ResizeMethod.BILINEAR)) // Adjust image size
+        //.add(ResizeOp(224, 224, ResizeOp.ResizeMethod.BILINEAR)) // Adjust image size
         .build()
 
     // code block for initialization of the model
     init {
-        // 장치의 GPU 호환성 체크, 지원되는 경우 GpuDelegate 추가
+        // Check device's GPU compatibility, i.e. check if this device supports GPU or not.
         val compatList = CompatibilityList()
 
-        val options = Interpreter.Options().apply{
-            if(compatList.isDelegateSupportedOnThisDevice){
-                val delegateOptions = compatList.bestOptionsForThisDevice
-                this.addDelegate(GpuDelegate(delegateOptions))
-            } else {
-                this.setNumThreads(4)
-            }
-        }
+        val options = getOptions(compatList)
 
         // Load interpreters for YOLOv8 and VGG16
-        interpreterYolo = loadInterpreter(options, modelYolov8Path, labelYolov8Path, labelsYolo)
-        interpreterVgg = loadInterpreter(options, modelVgg16Path, labelVgg16Path, labelsVgg)
+        interpreterYolo = loadInterpreter(options, modelYoloPath, labelYolov8Path, labelsYolo)
+        interpreterVgg = loadInterpreter(options, modelVggPath, labelVgg16Path, labelsVgg)
 
         // Get input and output tensor details
         val inputShape = interpreterYolo.getInputTensor(0)?.shape() // input tensor shape
@@ -128,26 +123,41 @@ class Detector(
 
         val options = if (isGpu) {
             val compatList = CompatibilityList()
-            Interpreter.Options().apply{
-                if(compatList.isDelegateSupportedOnThisDevice){
-                    val delegateOptions = compatList.bestOptionsForThisDevice
-                    this.addDelegate(GpuDelegate(delegateOptions))
-                } else {
-                    this.setNumThreads(4)
-                }
-            }
+            getOptions(compatList)
+//            Interpreter.Options().apply {
+//                if (compatList.isDelegateSupportedOnThisDevice) {
+//                    val delegateOptions = compatList.bestOptionsForThisDevice
+//                    this.addDelegate(GpuDelegate(delegateOptions))
+//                } else {
+//                    this.setNumThreads(4)
+//                }
+//            }
         } else {
-            Interpreter.Options().apply{
+            Interpreter.Options().apply {
                 this.setNumThreads(4)
             }
         }
 
         // Load models and creates interpreter objects for the loaded models
-        val modelYolo = FileUtil.loadMappedFile(context, modelYolov8Path)
+        val modelYolo = FileUtil.loadMappedFile(context, modelYoloPath)
         interpreterYolo = Interpreter(modelYolo, options)
 
-        val modelVgg = FileUtil.loadMappedFile(context, modelVgg16Path)
+        val modelVgg = FileUtil.loadMappedFile(context, modelVggPath)
         interpreterVgg = Interpreter(modelVgg, options)
+    }
+
+    // Configure interpreter options for GPU acceleration
+    private fun getOptions(compatList: CompatibilityList): Interpreter.Options {
+        val options = Interpreter.Options().apply {
+            if (compatList.isDelegateSupportedOnThisDevice) {
+                val delegateOptions = compatList.bestOptionsForThisDevice
+                // If it's possible, use GPU delegate
+                this.addDelegate(GpuDelegate(delegateOptions))
+            } else {
+                this.setNumThreads(4)
+            }
+        }
+        return options
     }
 
     fun close() {
@@ -155,6 +165,7 @@ class Detector(
         interpreterVgg.close()
     }
 
+    // Detect objects in the input image (frame) with type Bitmap.
     fun detect(frame: Bitmap) {
         // 입력 유효성 검사( 초기화 확인 )
         if (tensorWidth == 0) return
@@ -162,10 +173,10 @@ class Detector(
         if (numChannel == 0) return
         if (numElements == 0) return
 
-        // 추론이 얼마나 걸리는지 측정하기 위해 현재 시간 기록
-        var inferenceTime = SystemClock.uptimeMillis()
-
         // -----------------------------------------------------------------------------------------
+        // 추론이 얼마나 걸리는지 측정하기 위해 현재 시간 기록
+        var yoloStartTime = SystemClock.uptimeMillis()
+
         // YOLO 모델 예측 결과를 기반으로 신뢰도가 높은 검출 박스를 선택
         val yoloBestBoxes = detectYOLO(frame)
 
@@ -174,9 +185,15 @@ class Detector(
             detectorListener.onEmptyDetect()
             return
         }
+        var inferenceTimeYOLO = SystemClock.uptimeMillis() - yoloStartTime
+        // -----------------------------------------------------------------------------------------
 
+        // -----------------------------------------------------------------------------------------
+        var vggStartTime = SystemClock.uptimeMillis()
         // VGG16 모델 예측 결과를 기반으로 검출 결과를 나타내는 박스 생성
         val vggBox = detectVGG(frame)
+        // 현재 시간에서 시작 시간을 빼서 추론 소요 시간 계산
+        var inferenceTimeVGG = SystemClock.uptimeMillis() - vggStartTime
 
         val allBoxes: MutableList<BoundingBox> = ArrayList()
         //if (bestBoxes != null) {
@@ -185,11 +202,8 @@ class Detector(
         allBoxes.add(vggBox)
         // -----------------------------------------------------------------------------------------
 
-        // 현재 시간에서 시작 시간을 빼서 추론 소요 시간 계산
-        inferenceTime = SystemClock.uptimeMillis() - inferenceTime
-
         // 감지된 객체가 있는 경우 감지된 박스 리스트와 추론 시간을 전달
-        detectorListener.onDetect(allBoxes, inferenceTime)
+        detectorListener.onDetect(allBoxes, inferenceTimeYOLO, inferenceTimeVGG)
     }
 
     /**
@@ -327,8 +341,8 @@ class Detector(
                 arrayIdx += numElements
             }
 
-            // 신뢰도가 높은 객체 필터링
-            if (maxConf > CONFIDENCE_THRESHOLD) {// 신뢰도 낮은 객체 제외
+            // Filter out the detected objects that have a confidence below the threshold
+            if (maxConf > CONFIDENCE_THRESHOLD) {
                 val clsName = labelsYolo[maxIdx] // 해당 객체의 클래스 이름 가져옴
                 val cx = array[c] // 0, 객체 중심 좌표 x
                 val cy = array[c + numElements] // 1, 객체 중심 좌표 y
@@ -345,6 +359,7 @@ class Detector(
                 if (y2 < 0F || y2 > 1F) continue
 
                 boundingBoxes.add(
+                    // Create a bounding box for the detected object with the strong confidence score
                     BoundingBox(
                         x1 = x1, y1 = y1, x2 = x2, y2 = y2,
                         cx = cx, cy = cy, w = w, h = h,
@@ -363,7 +378,8 @@ class Detector(
         return selectedBoxes
     }
 
-    // 비최대 억제법(Non-Maximum Suppression)을 적용하여 검출된 객체의 중복 제거, 신뢰도 높은 객체만 남김
+    // 비최대 억제법(Non-Maximum Suppression)을 적용하여 검출된 객체의 중복 제거
+    // 신뢰도 높은 객체와 영역이 중복되는 객체는 제거하고 신뢰도 높은 객체만 남김
     private fun applyNMS(boxes: List<BoundingBox>) : MutableList<BoundingBox> {
         // 검출된 박스들을 신뢰도에 따라 내림차순으로 정렬 (신뢰도가 높은 박스가 리스트 앞쪽에 오도록 정렬)
         val sortedBoxes = boxes.sortedByDescending { it.cnf }.toMutableList()
@@ -410,7 +426,7 @@ class Detector(
 
     interface DetectorListener {
         fun onEmptyDetect()
-        fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long)
+        fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTimeYOLO: Long, inferenceTimeVGG: Long)
     }
 
     companion object {
