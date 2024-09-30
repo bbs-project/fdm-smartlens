@@ -5,15 +5,15 @@ import { StatusBar } from "expo-status-bar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as tf from "@tensorflow/tfjs";
 import "@tensorflow/tfjs-react-native";
-import { modelURI } from "./modelHandler";
-import { modelURIVgg16 } from "./modelHandler";
+import { yoloModelURI } from "./modelHandler";
+import { vggModelURI } from "./modelHandler";
 import CameraView from "./CameraView";
 
 const App = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState("back");
-  const [model, setModel] = useState(null);
-  const [modelVgg16, setModelVgg16] = useState(null);
+  const [yoloModel, setYoloModel] = useState(null);
+  const [vggModel, setVggModel] = useState(null);
   const [loading, setLoading] = useState({ loading: true, progress: 0 }); // loading state
   const [inputTensor, setInputTensor] = useState([]);
 
@@ -29,32 +29,41 @@ const App = () => {
         console.log(error)
       }
 
+      // Load the models if tensorflow is ready
       tf.ready().then(async () => {
         // Load YOLOv8 model
-        const yolov8 = await tf.loadGraphModel(modelURI, { // modelURI에 있는 URI를 인자로 받아 모델을 로드함
+        const yolov8 = await tf.loadGraphModel(yoloModelURI, {
           onProgress: (fractions) => {
-            setLoading({ loading: true, progress: fractions }); // set loading fractions(모델 로딩 상황 표시)
+            // Set loading progress
+            setLoading({ loading: true, progress: fractions });
           },
-        }); // load model
+        }); 
 
         // Load VGG16 model
-        const vgg16 = await tf.loadGraphModel(modelURIVgg16, { // modelURI에 있는 URI를 인자로 받아 모델을 로드함
+        const vgg16 = await tf.loadGraphModel(vggModelURI, { 
           onProgress: (fractions) => {
-            setLoading({ loading: true, progress: fractions }); // set loading fractions(모델 로딩 상황 표시)
+            // Set loading progress
+            setLoading({ loading: true, progress: fractions }); 
           },
-        }); // load model
+        }); 
 
-        // warming up model(모델 처음 실행시 발생하는 지연 시간을 줄이는 역할)
-        const dummyInput = tf.ones(yolov8.inputs[0].shape);// tf. ones -> 모든 요소가 1인 텐서 생성, 모델의 첫 번째 입력 텐서의 모양 반환(dummy)
+        // Warming up the model to reduce the latency of the first inference
+        // tf. ones -> 모든 요소가 1인 텐서 생성, 모델의 첫 번째 입력 텐서의 모양 반환(dummy)
+        // dummyInput's shape: [1, 3, 640, 640]
+        const dummyInput = tf.ones(yolov8.inputs[0].shape);
         console.log("dummyInput's shape:", yolov8.inputs[0].shape)
-        await yolov8.executeAsync(dummyInput);// 더미 텐서 실행
-        // yolov8.execute(dummyInput);// 더미 텐서 실행
-        tf.dispose(dummyInput);// 텐서를 메모리에서 해제
+        
+        // Execute the model with dummy input tensor
+        // await yolov8.executeAsync(dummyInput);
+        // yolov8.execute(dummyInput);
+
+        // Release the tensor from memory
+        tf.dispose(dummyInput);
 
         // set state(모델의 성공상태 Load)
         setInputTensor(yolov8.inputs[0].shape); // 실제로 Load된 모델의 inputTensor 상태 업데이트
-        setModel(yolov8); // 실제로 Load 된 모델의 상태 업데이트
-        setModelVgg16(vgg16);
+        setYoloModel(yolov8); // 실제로 Load 된 모델의 상태 업데이트
+        setVggModel(vgg16);
         setLoading({ loading: false, progress: 1 }); // loading이 끝났으므로 loading 상태를 false + progress의 상태를 완료된 상태인 1로 지정
       });
     })();
@@ -71,8 +80,8 @@ const App = () => {
               <View className="flex-1 w-full h-full items-center justify-center">
                 <CameraView // 각각의 속성 값을 전달
                   type={type}
-                  model={model}
-                  modelVgg16={modelVgg16}
+                  yoloModel={yoloModel}
+                  vggModel={vggModel}
                   inputTensorSize={inputTensor}
                   config={configurations}
                 >
@@ -82,10 +91,7 @@ const App = () => {
                       onPress={() => setType((current) => (current === "back" ? "front" : "back"))} 
                     >
                       <MaterialCommunityIcons
-                        className="mx-2"
-                        name="camera-flip"
-                        size={30}
-                        color="white"
+                        className="mx-2" name="camera-flip" size={30} color="white"
                       />
                       <Text className="mx-2 text-white text-lg font-semibold">Flip Camera</Text>
                     </TouchableOpacity>

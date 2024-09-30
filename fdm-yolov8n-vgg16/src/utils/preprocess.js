@@ -8,9 +8,13 @@ import * as tf from "@tensorflow/tfjs";
  * @returns input tensor, xRatio and yRatio
  */
 export const preprocess = (img, modelWidth, modelHeight) => {
-  let xRatio, yRatio; // ratios for boxes -> 패딩된 이미지의 비율을 저장하는 데 사용, 경계 상자를 원래 이미지의 크기를 변환할 때 필요
+  // 패딩된 이미지의 비율을 저장하는 데 사용, 경계 상자를 원래 이미지의 크기를 변환할 때 필요
+  let xRatio, yRatio; // ratios for boxes 
 
-  const input = tf.tidy(() => { // .tidy()는 내부에서 생성된 모든 텐서를 자동으로 메모리에서 해제한다.(메모리 누수 방지)
+  // .tidy()는 내부에서 생성된 모든 텐서를 자동으로 메모리에서 해제한다.(메모리 누수 방지)
+  const input = tf.tidy(() => { 
+    // img is already a tensor, 이미지가 텐서로 이미 변환되어 있음
+    // const img2 = tf.browser.fromPixels(img); // convert image to tensor, 이미지를 텐서로 변환
     // padding image to square => [n, m] to [n, n], n > m
     const [h, w] = img.shape.slice(0, 2); // get source width and height, slice(0,2) -> 텐서의 첫 두 차원을 가져오는데 이는 height와 width 이다.
     const maxSize = Math.max(w, h); // get max size, width 와 height 중 더 큰 size를 계산
