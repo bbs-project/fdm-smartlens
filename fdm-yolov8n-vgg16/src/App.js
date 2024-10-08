@@ -51,7 +51,7 @@ const App = () => {
         // tf. ones -> 모든 요소가 1인 텐서 생성, 모델의 첫 번째 입력 텐서의 모양 반환(dummy)
         // dummyInput's shape: [1, 3, 640, 640]
         const dummyInput = tf.ones(yolov8.inputs[0].shape);
-        console.log("dummyInput's shape:", yolov8.inputs[0].shape)
+        // console.log("dummyInput's shape:", yolov8.inputs[0].shape)
         
         // Execute the model with dummy input tensor
         // await yolov8.executeAsync(dummyInput);
@@ -61,10 +61,13 @@ const App = () => {
         tf.dispose(dummyInput);
 
         // set state(모델의 성공상태 Load)
+        // shape: [batchSize, height, width, channels]
         setInputTensor(yolov8.inputs[0].shape); // 실제로 Load된 모델의 inputTensor 상태 업데이트
         setYoloModel(yolov8); // 실제로 Load 된 모델의 상태 업데이트
-        setVggModel(vgg16);
-        setLoading({ loading: false, progress: 1 }); // loading이 끝났으므로 loading 상태를 false + progress의 상태를 완료된 상태인 1로 지정
+        setVggModel(vgg16); // 실제로 Load 된 모델의 상태 업데이트
+        // loading이 끝났으므로 loading 상태를 false 로 설정
+        // progress의 상태를 완료된 상태인 1로 지정
+        setLoading({ loading: false, progress: 1 }); 
       });
     })();
   }, []);
