@@ -67,8 +67,8 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
         const [input, xRatio, yRatio] = preprocess(transposedTensor, modelWidth, modelHeight); // preprocess image
  
         // -----------------------------------
-        const { boxesData, scoresData, classesData } = await detectYoloBoxes([input]);
-        const { vggBoxesData, vggClasses, vggKlasses, vggScores } = await detectVggBoxes();
+        const [numDetections, boxesData, scoresData, classesData] = await detectYoloBoxes([input]);
+        const [ vggBoxesData, vggClasses, vggKlasses, vggScores ] = await detectVggBoxes();
         // -----------------------------------
         
         // let xrate = ctx.width / 640; // modelWidth
@@ -76,9 +76,13 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
 
         ctx.clearRect(0, 0, ctx.width, ctx.height); // clean canvas, 캔버스를 초기화
 
-        // renderYoloBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
-        renderYoloBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
-        // VggBoxes are rendered in the View
+        // console.log("[YOLO] numDetections:", numDetections);
+
+        if (numDetections > 0) {
+          // renderYoloBoxes(ctx, config.threshold, boxesData, scoresData, classesData, [xRatio, yRatio]);
+          renderYoloBoxes(ctx, config.threshold, numDetections, boxesData, scoresData, classesData, [xRatio, yRatio]);
+          // VggBoxes are rendered in the View
+        }
 
         ctx.flush(); // 화면에 실제로 반영되도록 함
          
@@ -91,7 +95,7 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
       }
     
       // console.log("Requesting animation frame.");
-      throttledDetectFrame = throttle(detectFrame, 100); // Adjust the limit as needed (e.g., 100ms)
+      throttledDetectFrame = throttle(detectFrame, 300); // Adjust the limit as needed (e.g., 100ms)
 
       // requestAnimationFrame(detectFrame);
       requestAnimationFrame(throttledDetectFrame);
@@ -151,10 +155,8 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
         // //});
 
 
-        const yoloRes = await yoloModel.executeAsync(input); 
-        // const yoloRes = yoloModel.predict(input);
-        // const yoloRes = yoloModel.execute(input);
-        yoloRes.dataSync();
+        const res = await yoloModel.executeAsync(input); 
+        res.dataSync();
 
   
         // ---------------------------------------------------------------------------------------
@@ -180,8 +182,8 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
         //   - Extract relevant information: Get the final bounding box coordinates, class labels, and confidence scores for the detected objects. By understanding the structure and contents of this output tensor, you can effectively process the results of your YOLOv8 model and use them for object detection in your application.
 
         // Check the prediction results
-        if (Array.isArray(yoloRes)) {
-          yoloRes.forEach((item, i) => {
+        if (Array.isArray(res)) {
+          res.forEach((item, i) => {
             item.data().then(data => {
               // console.log(`[YOLO] ${i}th data:`, data);
               console.log("[YOLO]", i, "th data: ", data);
@@ -189,7 +191,7 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
           });
         } else {
           // If res is not an array, it's a tensor
-          yoloRes.data().then(data => {            
+          res.data().then(data => {            
             // console.log('[YOLO] single data:', data);
             // print number of elements in data
             // console.log("data.length:", data.length);
@@ -204,9 +206,63 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
         // Version 1
         // -----------------------------------------------------------------------------------
 
+        // const [boxes1, scores1, classes1, detections] = res;
+        // const boxes_data = boxes1.dataSync();
+        // const scores_data = scores1.dataSync();
+        // const classes_data = classes1.dataSync();
+        // const detections_data = detections.dataSync()[0];
+        // console.log("[YOLOv8] boxes_data: ", boxes_data);
+        // console.log("[YOLOv8] scores_data: ", scores_data);
+        // console.log("[YOLOv8] classes_data: ", classes_data);
+        // console.log("[YOLOv8] detections_data: ", detections_data);
+        // for (let i = 0; i < detections_data; i++) {
+        //   let [x1, y1, x2, y2] = boxes_data.slice(i * 4, (i + 1) * 4); 
+        //   const width = x2 - x1;
+        //   const height = y2 - y1;
+        //   console.log("[YOLOv8] x1, y1, x2, y2, width, height: ", x1, y1, x2, y2, width, height);
+        // }
+
         // transpose result [b, det, n] => [b, n, det]
         // [1, 9, 8400] -> [1, 8400, 9]
-        const transRes = yoloRes.transpose([0, 2, 1]); 
+        const transRes = res.transpose([0, 2, 1]); 
+        
+        const boxes1 = tf.tidy(() => {
+          const w = transRes.slice([0, 0, 2], [-1, -1, 1]); // get width
+          const h = transRes.slice([0, 0, 3], [-1, -1, 1]); // get height
+          const x1 = tf.sub(transRes.slice([0, 0, 0], [-1, -1, 1]), tf.div(w, 2)); // x1
+          const y1 = tf.sub(transRes.slice([0, 0, 1], [-1, -1, 1]), tf.div(h, 2)); // y1
+          return tf
+            .concat(
+              [
+                y1,
+                x1,
+                tf.add(y1, h), //y2
+                tf.add(x1, w), //x2
+              ],
+              2
+            )
+            .squeeze();
+        }); // process boxes [y1, x1, y2, x2]
+        // console.log("boxes1.shape:", boxes1.shape);
+        // console.log("boxes1:", boxes1.dataSync());
+
+        const [scores1, classes1] = tf.tidy(() => {
+          // class scores
+          const rawScores = transRes.slice([0, 0, 4], [-1, -1, numClass]).squeeze(0); // #6 only squeeze axis 0 to handle only 1 class models
+          return [rawScores.max(1), rawScores.argMax(1)];
+        }); // get max scores and classes index
+      
+        const nms1 = await tf.image.nonMaxSuppressionAsync(boxes1, scores1, maxNumber, iouThreshold, scoreThreshold); // NMS to filter boxes
+      
+        const boxes_data = boxes1.gather(nms1, 0).dataSync(); // indexing boxes by nms index
+        const scores_data = scores1.gather(nms1, 0).dataSync(); // indexing scores by nms index
+        const classes_data = classes1.gather(nms1, 0).dataSync(); // indexing classes by nms index
+
+        // console.log("boxes_data:", boxes_data);
+        // console.log("scores_data:", scores_data);
+        //console.log("length:", scores_data.length);
+        const num_detections = scores_data.length;
+        // console.log("classes_data:", classes_data);
 
         // Assuming reshapedOutput is a tensor of shape [1, 8400, 9]
         // Convert tensor to array and get the first element
@@ -241,7 +297,7 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
             classes.push(maxClassIndex);
             
             // Get class name using the index
-            const className = labels[maxClassIndex];
+            const klass = labels[maxClassIndex];
 
             // ## 증상명
             // * 01 : 출혈 (Bleeding)
@@ -250,7 +306,25 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
             // * 04 : 종양 (Ulcer)
             // * 05 : 안구증상 (eyesSymptom)
 
-            klasses.push(className);
+            klasses.push(klass);
+
+            // const width = x2 - x1;
+            // const height = y2 - y1;
+            // //const klass = labels[classesData[i]]; // class index를 yolo class이름으로 매칭
+            // //const score = scoresData[i].toFixed(2);
+
+            // // bounding box 그리기
+            // ctx.strokeStyle = "#00FFFF";
+            // ctx.lineWidth = 4;
+            // ctx.strokeRect(x1, y1, width, height);
+
+            // // label과 confidence score 그리기
+            // ctx.fillStyle = "#00FFFF";
+            // const font = "16";
+            // const textWidth = ctx.measureText(klass + ":" + maxConfidence).width;
+            // const textHeight = parseInt(font, 10); // base 10
+            // ctx.fillRect(x1, y1, textWidth + 4, textHeight + 4);
+            // ctx.flush();
 
             // Now you have the class name, confidence, and bounding box for this prediction
             // You can use this information as needed in your application
@@ -303,13 +377,50 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
         // const scoresData = scores.gather(nms, 0).dataSync(); // indexing scores by nms index
         // const classesData = classes.gather(nms, 0).dataSync(); // indexing classes by nms index
 
+
+        // -----------------------------------------------------------------------------------
+        // Version 3
+        // -----------------------------------------------------------------------------------
+        // transpose result [b, det, n] => [b, n, det]
+        // [1, 9, 8400] -> [1, 8400, 9]
+        // const transRes = yoloRes.transpose([0, 2, 1]); 
+        // const [boxes, scores, classes, valid_detections] = res;
+        // const boxesData = boxes.dataSync();
+        // const scoresData = scores.dataSync();
+        // const classesData = classes.dataSync();
+        // const valid_detections_data = valid_detections.dataSync()[0];
+        
+        // var i;
+        // for (i = 0; i < valid_detections_data; ++i) { // valid_detections수만큼 물체 인식
+        //   let [x1, y1, x2, y2] = boxesData.slice(i * 4, (i + 1) * 4); // slicing을 통한 한 물체의 bounding box 좌표 추출
+        //   //...// 생략
+        //   const width = x2 - x1;
+        //   const height = y2 - y1;
+        //   const klass = labels[classesData[i]]; // class index를 yolo class이름으로 매칭
+        //   const score = scoresData[i].toFixed(2);
+
+        //   // bounding box 그리기
+        //   this.ctx.strokeStyle = "#00FFFF";
+        //   this.ctx.lineWidth = 4;
+        //   this.ctx.strokeRect(x1, y1, width, height);
+
+        //   // label과 confidence score 그리기
+        //   this.ctx.fillStyle = "#00FFFF";
+        //   const textWidth = this.ctx.measureText(klass + ":" + score).width;
+        //   const textHeight = parseInt(font, 10); // base 10
+        //   this.ctx.fillRect(x1, y1, textWidth + 4, textHeight + 4);
+        //   this.ctx.flush();
+        // }
+
         // -----------------------------------------------------------------------------------
         // End of Detection
         // -----------------------------------------------------------------------------------
 
-        tf.dispose([yoloRes, transRes, nms]);
+        // tf.dispose([res]);
+        // tf.dispose([yoloRes, transRes, nms]);
 
-        return { boxesData, scoresData, classesData };
+        // return [{] boxesData, scoresData, classesData ];
+        return [ num_detections, boxes_data, scores_data, classes_data ];   
       }
 
       // Detect prediction boxes using VGG16 model
@@ -452,7 +563,7 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
         }).catch((error) => {
           console.log("Error in executing model:", error);
         });
-        return { vggBoxesData, vggClasses, vggKlasses, vggScores };
+        return [ vggBoxesData, vggClasses, vggKlasses, vggScores ];
       }
     }
    

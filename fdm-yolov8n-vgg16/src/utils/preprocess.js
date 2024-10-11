@@ -35,8 +35,9 @@ export const preprocess = (img, modelWidth, modelHeight) => {
     // const newImg = imgPadded.transpose([1, 2, 0]); // transpose to [640, 640, 3]
     // newImg.expandDims(0);
     // 예측 결과 박스를 원래 이미지 크기에 맞추기 위해 사용
-    xRatio = maxSize / w; // update xRatio
-    yRatio = maxSize / h; // update yRatio
+    xRatio = maxSize / w; // update xRatio    
+    // yRatio = maxSize / h; // update yRatio
+    yRatio = maxSize / w; // update yRatio
     // console.log("preprocess: ", h, w, maxSize, imgPadded.shape, xRatio, yRatio);
     
     // imgPadded should have [batch, height, width, channels] shape
