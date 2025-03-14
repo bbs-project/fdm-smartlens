@@ -1,4 +1,4 @@
-# YOLOv5 on Multi Platform Using `tfjs-react-native`
+# YOLOv8 and VGG16 on Multi Platform Using `tfjs-react-native`
 
 <p align="center">
   <img src="./sample.jpeg" height="500" />
@@ -110,3 +110,15 @@ Use another YOLOv5 model.
 ## Reference
 
 https://github.com/ultralytics/yolov5
+
+## Build APK
+### Generate a release APK under android/app/build/outputs/apk/release/app-release.apk
+$ cd .\android\
+$ .\gradlew assembleRelease
+
+### Test the APK on a physical device or emulator
+$ adb start-server
+$ adb reconnect device
+$ adb install android/app/build/outputs/apk/release/app-release.apk
+--> Performing Streamed Install
+--> Success
