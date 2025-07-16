@@ -3,6 +3,7 @@ package kr.re.etri.fdm.smartlens
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.SystemClock
+import android.util.Log
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -15,11 +16,13 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.BufferedReader
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.nio.charset.StandardCharsets
 
 
 class Detector(
@@ -113,6 +116,7 @@ class Detector(
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
         return interpreter
     }
 
@@ -175,30 +179,29 @@ class Detector(
 
         // -----------------------------------------------------------------------------------------
         // 추론이 얼마나 걸리는지 측정하기 위해 현재 시간 기록
-        var yoloStartTime = SystemClock.uptimeMillis()
+        val yoloStartTime = SystemClock.uptimeMillis()
 
         // YOLO 모델 예측 결과를 기반으로 신뢰도가 높은 검출 박스를 선택
         val yoloBestBoxes = detectYOLO(frame)
 
-        // YOLO 모델에서 감지된 객체가 없는 경우 onEmptyDetect() 호출
+        // YOLO 모델에서 감지된 객체가 없는 경우, call onEmptyDetect() abd return
         if (yoloBestBoxes == null) {
             detectorListener.onEmptyDetect()
             return
         }
-        var inferenceTimeYOLO = SystemClock.uptimeMillis() - yoloStartTime
+        val inferenceTimeYOLO = SystemClock.uptimeMillis() - yoloStartTime
         // -----------------------------------------------------------------------------------------
 
         // -----------------------------------------------------------------------------------------
-        var vggStartTime = SystemClock.uptimeMillis()
+        val vggStartTime = SystemClock.uptimeMillis()
         // VGG16 모델 예측 결과를 기반으로 검출 결과를 나타내는 박스 생성
         val vggBox = detectVGG(frame)
         // 현재 시간에서 시작 시간을 빼서 추론 소요 시간 계산
-        var inferenceTimeVGG = SystemClock.uptimeMillis() - vggStartTime
+        val inferenceTimeVGG = SystemClock.uptimeMillis() - vggStartTime
+        // -----------------------------------------------------------------------------------------
 
         val allBoxes: MutableList<BoundingBox> = ArrayList()
-        //if (bestBoxes != null) {
-            allBoxes.addAll(yoloBestBoxes)
-        //}
+        allBoxes.addAll(yoloBestBoxes)
         allBoxes.add(vggBox)
         // -----------------------------------------------------------------------------------------
 
@@ -246,10 +249,9 @@ class Detector(
     }
 
     /**
-     * If YOLO interpreter detected something from this image, run VGG16 interpreter for this image
-     * also to find disease name.
+     * Run VGG16 interpreter to find disease name.
      * - VGG16's Input Tensor Shape: 1 x 112 x 112 x 3
-     * - VGG16's Output Tensor Shape: 1 x 7
+     * - VGG16's Output Tensor Shape: 1 x 7 (disease classes)
      */
     private fun detectVGG(frame: Bitmap): BoundingBox {
         // Resize the frame from Camera to 112x112
@@ -274,7 +276,6 @@ class Detector(
         // println("VGG16: Output tensor shape: ${outputShape[0]} x ${outputShape[1]} x ${outputShape[2]} x ${outputShape[3]}")
 
         interpreterVgg.run(convertBitmapToByteBuffer(frame), tensorBuffer.buffer)
-        // interpreter_V.run(processedImage_V.buffer, output_V.buffer)
 
         val confidences = tensorBuffer.floatArray
         print("VGG16: confidences=[ ")
@@ -340,9 +341,10 @@ class Detector(
                 j++
                 arrayIdx += numElements
             }
+            // println("bestBox: c=$c, maxConf=$maxConf, maxIdx=$maxIdx")
 
             // Filter out the detected objects that have a confidence below the threshold
-            if (maxConf > CONFIDENCE_THRESHOLD) {
+            if (maxIdx > 0 && maxConf+1 > CONFIDENCE_THRESHOLD) {
                 val clsName = labelsYolo[maxIdx] // 해당 객체의 클래스 이름 가져옴
                 val cx = array[c] // 0, 객체 중심 좌표 x
                 val cy = array[c + numElements] // 1, 객체 중심 좌표 y
@@ -370,11 +372,14 @@ class Detector(
         }
 
         if (boundingBoxes.isEmpty()) {
+            println("YOLO: boundingBoxes is empty")
             return null
         }
 
         // 검출된 결과에 대해서 비최대 억제법(NMS)를 적용하여 중복 박스를 제거한다.
         val selectedBoxes = applyNMS(boundingBoxes)
+        println("YOLO: found boundingBoxes = ${boundingBoxes.size}, selectedBoxes = ${selectedBoxes.size}")
+
         return selectedBoxes
     }
 
@@ -383,10 +388,10 @@ class Detector(
     private fun applyNMS(boxes: List<BoundingBox>) : MutableList<BoundingBox> {
         // 검출된 박스들을 신뢰도에 따라 내림차순으로 정렬 (신뢰도가 높은 박스가 리스트 앞쪽에 오도록 정렬)
         val sortedBoxes = boxes.sortedByDescending { it.cnf }.toMutableList()
+
         // NMS 적용 후 남겨진 최종적으로 선택된 박스를 저장할 리스트 초기화
         val selectedBoxes = mutableListOf<BoundingBox>()
-
-        while(sortedBoxes.isNotEmpty()) {
+        while (sortedBoxes.isNotEmpty()) {
             // first는 현재 가장 신뢰도가 높은 박스를 나타냄, 이는 sortedBoxes의 첫 번째 요소가 됨
             val first = sortedBoxes.first()
             selectedBoxes.add(first) // 가장 신뢰도 높은 박스를 선택된 리스트 추가

@@ -182,6 +182,14 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         cameraExecutor.shutdown()
     }
 
+    override fun onPause() {
+        super.onPause()
+        cameraProvider?.let {
+            it.unbind(preview, imageAnalyzer) // Explicitly unbind preview and imageAnalyzer
+            Log.d(TAG, "CameraX use cases unbound in onPause.")
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         if (allPermissionsGranted()){

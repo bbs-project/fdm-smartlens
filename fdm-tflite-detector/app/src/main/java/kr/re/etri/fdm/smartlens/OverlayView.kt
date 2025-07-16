@@ -8,11 +8,13 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import kr.re.etri.fdm.smartlens.Constants.DEFAULT_TEXT_SIZE
+import kr.re.etri.fdm.smartlens.Constants.BOX_STROKE_WIDTH
 
 // Displays the detected objects on the screen
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
-    private var results = listOf<BoundingBox>() // 감지된 객체 리스트
+    private var results = listOf<BoundingBox>() // list of detected object (bounding boxes)
     // 화면에 정보를 알려준 Paint 객체둘
     private var boxPaint = Paint()
     private var textBackgroundPaint = Paint()
@@ -21,7 +23,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     private var bounds = Rect() // 텍스트 크기 측정을 위한 Rect 객체
 
     init {
-        initPaints()
+        initPaints(context)
     }
 
     fun clear() {
@@ -30,22 +32,29 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         textBackgroundPaint.reset()
         boxPaint.reset()
         invalidate()
-        initPaints()
+        initPaints(context)
     }
 
     // Initialize 'Paint' objects to specify text and box styles
-    private fun initPaints() {
-        textBackgroundPaint.color = Color.BLACK
-        textBackgroundPaint.style = Paint.Style.FILL
-        textBackgroundPaint.textSize = 50f
+    private fun initPaints(context: Context?) {
+        // text background
+        textBackgroundPaint.apply {
+            color = Color.BLACK
+            style = Paint.Style.FILL
+            textSize = DEFAULT_TEXT_SIZE
+        }
 
-        textPaint.color = Color.WHITE
-        textPaint.style = Paint.Style.FILL
-        textPaint.textSize = 50f
+        textPaint.apply {
+            color = Color.WHITE
+            style = Paint.Style.FILL
+            textSize = DEFAULT_TEXT_SIZE
+        }
 
-        boxPaint.color = ContextCompat.getColor(context!!, R.color.bounding_box_color)
-        boxPaint.strokeWidth = 8F
-        boxPaint.style = Paint.Style.STROKE
+        boxPaint.apply {
+            color = ContextCompat.getColor(context!!, R.color.bounding_box_color)
+            strokeWidth = BOX_STROKE_WIDTH
+            style = Paint.Style.STROKE
+        }
     }
 
     override fun draw(canvas: Canvas) {
