@@ -53,9 +53,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         }
 
         // Check if all required permissions are granted, if not, request them
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
+        if (!allPermissionsGranted()) {
             // Request all required permissions
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
@@ -119,34 +117,35 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
 
         // 분석 실행마다 비트맵 생성, 필요 시 회전 또는 좌우 반전 적용
         imageAnalyzer?.setAnalyzer(cameraExecutor) { imageProxy ->
-            val bitmapBuffer =
-                Bitmap.createBitmap(
-                    imageProxy.width,
-                    imageProxy.height,
-                    Bitmap.Config.ARGB_8888
-                )
-            imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
-            imageProxy.close()
-
-            val matrix = Matrix().apply {
-                postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-
-                if (isFrontCamera) {
-                    postScale(
-                        -1f,
-                        1f,
-                        imageProxy.width.toFloat(),
-                        imageProxy.height.toFloat()
+            imageProxy.use { proxy ->
+                val bitmapBuffer =
+                    Bitmap.createBitmap(
+                        proxy.width,
+                        proxy.height,
+                        Bitmap.Config.ARGB_8888
                     )
+                bitmapBuffer.copyPixelsFromBuffer(proxy.planes[0].buffer)
+
+                val matrix = Matrix().apply {
+                    postRotate(proxy.imageInfo.rotationDegrees.toFloat())
+
+                    if (isFrontCamera) {
+                        postScale(
+                            -1f,
+                            1f,
+                            proxy.width.toFloat(),
+                            proxy.height.toFloat()
+                        )
+                    }
                 }
+
+                val rotatedBitmap = Bitmap.createBitmap(
+                    bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
+                    matrix, true
+                )
+
+                detector?.detect(rotatedBitmap)
             }
-
-            val rotatedBitmap = Bitmap.createBitmap(
-                bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
-                matrix, true
-            )
-
-            detector?.detect(rotatedBitmap)
         }
 
         // 기존 바인딩된 모든 사용 사례 해제( 리소스 확보 )
@@ -182,17 +181,28 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         cameraExecutor.shutdown()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            requestPermissionLauncher.launch(REQUIRED_PERMISSIONS)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        cameraProvider?.unbindAll()
+    }
+
     override fun onPause() {
         super.onPause()
-        cameraProvider?.let {
-            it.unbind(preview, imageAnalyzer) // Explicitly unbind preview and imageAnalyzer
-            Log.d(TAG, "CameraX use cases unbound in onPause.")
-        }
+        cameraProvider?.unbindAll()
     }
 
     override fun onResume() {
         super.onResume()
-        if (allPermissionsGranted()){
+        if (allPermissionsGranted()) {
             startCamera()
         } else {
             requestPermissionLauncher.launch(REQUIRED_PERMISSIONS)
@@ -218,8 +228,8 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTimeYOLO: Long, inferenceTimeVGG: Long) {
         runOnUiThread {
             val inferenceTime = inferenceTimeYOLO + inferenceTimeVGG
-            binding.inferenceTimeYOLO.text = "Y=${inferenceTimeYOLO}ms"
-            binding.inferenceTimeVGG .text = "V=${inferenceTimeVGG}ms"
+            binding.inferenceTimeYOLO.text = "YOLO=${inferenceTimeYOLO}ms"
+            binding.inferenceTimeVGG .text = "VGG16=${inferenceTimeVGG}ms"
             binding.inferenceTime.text = "=> ${inferenceTime}ms"
             binding.overlay.apply {
                 setResults(boundingBoxes)

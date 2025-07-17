@@ -3,7 +3,6 @@ package kr.re.etri.fdm.smartlens
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.SystemClock
-import android.util.Log
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -16,20 +15,18 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.BufferedReader
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.charset.StandardCharsets
 
 
 class Detector(
     // Declare class variables
-    private val context: Context, // Android 컨텍스트
+    private val context: Context, // Android Context
     private val modelYoloPath: String, // YOLOv8 모델 파일 경로
-    private val labelYolov8Path: String, // YOLOv8 레이블 파일 경로
+    private val labelYolo8Path: String, // YOLOv8 레이블 파일 경로
     private val modelVggPath: String, // YOLOv8 모델 파일 경로
     private val labelVgg16Path: String, // YOLOv8 레이블 파일 경로
     private val detectorListener: DetectorListener, // 감지 결과를 받을 리스너
@@ -69,7 +66,7 @@ class Detector(
         val options = getOptions(compatList)
 
         // Load interpreters for YOLOv8 and VGG16
-        interpreterYolo = loadInterpreter(options, modelYoloPath, labelYolov8Path, labelsYolo)
+        interpreterYolo = loadInterpreter(options, modelYoloPath, labelYolo8Path, labelsYolo)
         interpreterVgg = loadInterpreter(options, modelVggPath, labelVgg16Path, labelsVgg)
 
         // Get input and output tensor details
@@ -178,13 +175,14 @@ class Detector(
         if (numElements == 0) return
 
         // -----------------------------------------------------------------------------------------
-        // 추론이 얼마나 걸리는지 측정하기 위해 현재 시간 기록
+        // Record current time for inference time measurement
         val yoloStartTime = SystemClock.uptimeMillis()
 
-        // YOLO 모델 예측 결과를 기반으로 신뢰도가 높은 검출 박스를 선택
+        // Detect objects in the input image using YOLOv8 model
         val yoloBestBoxes = detectYOLO(frame)
 
-        // YOLO 모델에서 감지된 객체가 없는 경우, call onEmptyDetect() abd return
+        // If YOLO model fails to detect any objects,
+        // call onEmptyDetect() and return
         if (yoloBestBoxes == null) {
             detectorListener.onEmptyDetect()
             return
@@ -194,9 +192,9 @@ class Detector(
 
         // -----------------------------------------------------------------------------------------
         val vggStartTime = SystemClock.uptimeMillis()
-        // VGG16 모델 예측 결과를 기반으로 검출 결과를 나타내는 박스 생성
+        // Get disease name of the detected object using VGG16 model
         val vggBox = detectVGG(frame)
-        // 현재 시간에서 시작 시간을 빼서 추론 소요 시간 계산
+        // Calculate inference time for VGG16 model
         val inferenceTimeVGG = SystemClock.uptimeMillis() - vggStartTime
         // -----------------------------------------------------------------------------------------
 
@@ -215,13 +213,13 @@ class Detector(
      * - YOLOv8's Output Tensor Shape: 1 x 9 x 8400
      */
     private fun detectYOLO(frame: Bitmap): List<BoundingBox>? {
-        // 입력 이미지를 모델이 요구하는 크기로 조정
+        // Scale the input image to the expected size of the model
         val inputBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
 
-        // 이미지를 모델의 입력 형식으로 변환하고, 전처리 수행
+        // Create a TensorImage from the scaled bitmap
         val tensorImage = TensorImage(INPUT_IMAGE_TYPE) // 입력 이미지 타입 지정한 텐서 이미지 생성
         tensorImage.load(inputBitmap) // 조정된 이미지를 'tensorImage' 객체에 로드
-        // 이미지 정규화하고 타입을 변환(CastOp), 학습된 모델이 기대하는 형식으로 이미지 준비
+        // Preprocess the tensor image using the imageProcessor
         val processedImage = imageProcessorYolo.process(tensorImage)
 
         // 모델에 전처리된 이미지를 입력으로 주고 추론 수행
@@ -278,16 +276,16 @@ class Detector(
         interpreterVgg.run(convertBitmapToByteBuffer(frame), tensorBuffer.buffer)
 
         val confidences = tensorBuffer.floatArray
-        print("VGG16: confidences=[ ")
-        for (confidence in confidences) {
-            print("$confidence ")
-        }
-        println("]")
+//        print("VGG16: confidences=[ ")
+//        for (confidence in confidences) {
+//            print("$confidence ")
+//        }
+//        println("]")
 
         val maxIndex = confidences.indices.maxByOrNull { confidences[it] } ?: -1
         val maxConfidence = confidences[maxIndex]
         val detectedClassName = labelsVgg.getOrNull(maxIndex) ?: "Unknown"
-        println("VGG16: maxIndex: [$maxIndex], maxConfidence: $maxConfidence, detectedClassName: $detectedClassName")
+        println("VGG16: maxIndex=[$maxIndex], maxConfidence=$maxConfidence, detectedClassName=$detectedClassName")
 
         val boundingBox = BoundingBox(
             x1 = 0f, y1 = 0f, x2 = 1f, y2 = 1f,
@@ -372,7 +370,7 @@ class Detector(
         }
 
         if (boundingBoxes.isEmpty()) {
-            println("YOLO: boundingBoxes is empty")
+            // println("YOLO: boundingBoxes is empty")
             return null
         }
 
@@ -403,7 +401,8 @@ class Detector(
             while (iterator.hasNext()) {
                 val nextBox = iterator.next() // 현재 비교 대상이 되는 박스
                 val iou = calculateIoU(first, nextBox) // 두 박스 간의 IoU를 계산하는 함수
-                // IOU_THRESHOLD를 넘으면 박스가 겹친다는 의미 -> remove를 통해 제거
+                // If IoU is greater than the threshold, there's overlap between the boxes.
+                // Remove the second box from the list
                 if (iou >= IOU_THRESHOLD) {
                     iterator.remove()
                 }
@@ -414,7 +413,8 @@ class Detector(
         return selectedBoxes
     }
 
-    // IoU 계산 ( IoU는 두 박스가 얼마나 겹치는지 측정 지표, 0~1 값을 가짐)
+    // Calculate Intersection over Union (IoU).
+    // IoU (0~1) is a metric that measures the overlap between two bounding boxes.
     private fun calculateIoU(box1: BoundingBox, box2: BoundingBox): Float {
         // 두 박스가 겹치는 부분의 좌상단 및 우하단 좌표 계산
         val x1 = maxOf(box1.x1, box2.x1)
