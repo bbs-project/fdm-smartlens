@@ -47,5 +47,11 @@
   },
   "bugs": {
     "url": "https://github.com/Hyuto/yolov5-tfjs-react-native/issues"
+  },
+  "resolutions": {
+    "serialize-javascript": ">=6.0.2",
+    "minimatch": ">=3.0.5",
+    "tar": ">=6.1.9",
+    "pbkdf2": ">=3.1.2"
   }
 }
