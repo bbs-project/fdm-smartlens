@@ -1,2 +1,4 @@
 /.idea/shelf/
 fdm-tflite-detector/app/release/app-release.apk
+node_modules/
+
