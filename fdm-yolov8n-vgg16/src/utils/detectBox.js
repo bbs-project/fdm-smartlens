@@ -206,7 +206,7 @@ export async function detectVggBoxes(vggModel, image) {
       // * 11 : 연쇄구균증
       // * 13 : 비브리오병
       // * 19 : 에드워드병
-      const classes = [1, 2, 6, 8, 11, 13, 19];
+      const diseaseCodes = [1, 2, 6, 8, 11, 13, 19];
             
       // Convert prediction results to codes
       // const resultCode = result.map(value => {
@@ -215,9 +215,9 @@ export async function detectVggBoxes(vggModel, image) {
         const codes = [];
         for (let i = 0; i < value.length; i++) {
           if (value[i] === 1) {
-            const code = classes[i];
+            const code = diseaseCodes[i];
             codes.push(code);
-            classes.push(code); 
+            classes.push(code);
             const klass = getVggClassName(code);
             klasses.push(klass); 
             scores.push(1.0); // Dummy score
@@ -270,7 +270,7 @@ export async function detectVggBoxes(vggModel, image) {
       // tf.dispose([pred, vggInput]);    
     }
 
-    tf.dispose([res, input]);
+    tf.dispose([res, input, batchTensor]);
   }).catch((error) => {
     console.log("Error in executing model:", error);
   });

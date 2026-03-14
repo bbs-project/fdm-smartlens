@@ -12,7 +12,7 @@
 
 ---
 
-Object Detection using YOLOv5 on multiplatform using `tensorflowjs` and `react-native`.
+Object Detection using YOLOv8 and VGG16 Disease Classification on multiplatform using `tensorflowjs` and `react-native`.
 
 ## Platforms
 

@@ -84,7 +84,7 @@ const CameraView = ({ type, yoloModel, vggModel, inputTensorSize: inputShape, co
           setVggOutputs(vOutputs);
           // -----------------------------------
           
-          tf.dispose([vggBoxesData, vggClasses, vggKlasses, vggScores, vggOutputs]);  
+          tf.dispose([vggBoxesData, vggClasses, vggKlasses, vggScores]);
 
           // let xrate = ctx.width / 640; // modelWidth
           // let yrate = ctx.height / 640; // modelHeight          
