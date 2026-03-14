@@ -42,23 +42,6 @@ export async function detectYoloBoxes(yoloModel, params) {
   //   - Apply non-maximum suppression (NMS): Eliminate overlapping bounding boxes for the same object.
   //   - Extract relevant information: Get the final bounding box coordinates, class labels, and confidence scores for the detected objects. By understanding the structure and contents of this output tensor, you can effectively process the results of your YOLOv8 model and use them for object detection in your application.
 
-  // Check the prediction results
-  if (Array.isArray(res)) {
-    res.forEach((item, i) => {
-      item.data().then(data => {
-        // console.log(`[YOLO] ${i}th data:`, data);
-        console.log("[YOLO]", i, "th data: ", data);
-      });
-    });
-  } else {
-    // If res is not an array, it's a tensor
-    res.data().then(data => {            
-      // console.log('[YOLO] single data:', data);
-      // print number of elements in data
-      // console.log("data.length:", data.length);
-    });
-  }
-
   // transpose result from [1, 9, 8400] -> [1, 8400, 9] 
   let tx_res;
   if (Array.isArray(res)) {
@@ -163,23 +146,6 @@ export async function detectVggBoxes(vggModel, image) {
 
   await vggModel.executeAsync(input).then((res) => {
     
-    // Check the prediction results
-    if (Array.isArray(res)) {
-      res.forEach((item, i) => {
-        item.data().then(data => {
-          // console.log(`[VGG16] ${i}th data:`, data);
-          // console.log("[VGG16]", i, "th data: ", data);
-        });
-      });
-    } else {
-      // If rs is not an array, it's a tensor
-      res.data().then(data => {
-        // [VGG] data: [0, 0, 8.73132399714649e-11, 0, 0, 1.0819256897390123e-25, 0]
-        // console.log("[VGG] data:", data);
-      });
-    }
-
-    // res: [ [ 0, 0, 1, 0, 0, 1, 0 ] ]
     const pred = res.arraySync(); // Get predictions as an array          
 
     if (pred) {
@@ -225,9 +191,6 @@ export async function detectVggBoxes(vggModel, image) {
           }
         }
 
-        // print outputs
-        console.log("[VGG] ", outputs);
-        
         return codes;
       });
       // console.log("numCodes", resultCodes.length, ", ", resultCodes);

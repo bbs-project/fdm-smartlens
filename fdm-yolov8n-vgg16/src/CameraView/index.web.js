@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
 import { preprocess } from "../utils/preprocess";
+import { detectYoloBoxes } from "../utils/detectBox";
 import { renderBoxes } from "../utils/renderBox";
 
-const CameraView = ({ type, model, inputTensorSize, config, children }) => {
+const CameraView = ({ type, yoloModel, vggModel, inputTensorSize, config, children }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const frameRef = useRef(null);
@@ -12,7 +13,6 @@ const CameraView = ({ type, model, inputTensorSize, config, children }) => {
 
   /**
    * Function to detect every frame loaded from webcam in video tag.
-   * @param {tf.GraphModel} model loaded YOLOv5 tensorflow.js model
    */
   const detectFrame = async () => {
     tf.engine().startScope();
@@ -20,17 +20,16 @@ const CameraView = ({ type, model, inputTensorSize, config, children }) => {
     const [input, xRatio, yRatio] = preprocess(rawInput, modelWidth, modelHeight);
     const ctx = canvasRef.current.getContext("2d");
 
-    await model.executeAsync(input).then((res) => {
-      const [boxes, scores, classes] = res.slice(0, 3);
-      const boxes_data = boxes.dataSync();
-      const scores_data = scores.dataSync();
-      const classes_data = classes.dataSync();
+    const [numDetections, boxesData, scoresData, classesData] = await detectYoloBoxes(yoloModel, [input]);
 
-      renderBoxes(ctx, config.threshold, boxes_data, scores_data, classes_data, [xRatio, yRatio]);
-      tf.dispose([res, input, rawInput]);
-    });
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    if (numDetections > 0) {
+      renderBoxes(ctx, config.threshold, numDetections, boxesData, scoresData, classesData, [xRatio, yRatio]);
+    }
 
-    frameRef.current = requestAnimationFrame(detectFrame); // get another frame
+    tf.dispose([input, rawInput]);
+
+    frameRef.current = requestAnimationFrame(detectFrame);
     tf.engine().endScope();
   };
 

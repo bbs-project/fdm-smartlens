@@ -5,12 +5,13 @@ import { Colors } from "../utils";
  * Render prediction boxes
  * @param {CanvasRenderingContext2D} ctx canvas rendering context
  * @param {number} classThreshold class threshold
+ * @param {number} num_detections number of detections
  * @param {Array} boxes_data boxes array
  * @param {Array} scores_data scores array
  * @param {Array} classes_data class array
  * @param {Array[Number]} ratios boxes ratio [xRatio, yRatio]
  */
-export const renderBoxes = (ctx, classThreshold, boxes_data, scores_data, classes_data, ratios) => {
+export const renderBoxes = (ctx, classThreshold, num_detections, boxes_data, scores_data, classes_data, ratios) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // clean canvas
 
   const colors = new Colors();
@@ -23,7 +24,7 @@ export const renderBoxes = (ctx, classThreshold, boxes_data, scores_data, classe
   ctx.font = font;
   ctx.textBaseline = "top";
 
-  for (let i = 0; i < scores_data.length; ++i) {
+  for (let i = 0; i < num_detections; ++i) {
     // filter based on class threshold
     if (scores_data[i] > classThreshold) {
       const klass = labels[classes_data[i]];
@@ -31,10 +32,16 @@ export const renderBoxes = (ctx, classThreshold, boxes_data, scores_data, classe
       const score = (scores_data[i] * 100).toFixed(1);
 
       let [x1, y1, x2, y2] = boxes_data.slice(i * 4, (i + 1) * 4);
-      x1 *= ctx.canvas.width * ratios[0];
-      x2 *= ctx.canvas.width * ratios[0];
-      y1 *= ctx.canvas.height * ratios[1];
-      y2 *= ctx.canvas.height * ratios[1];
+
+      // Scale box coordinates from model space to canvas space
+      // Box coords are in model pixel space (0-640), ratios account for padding
+      const scaleX = ctx.canvas.width / (ctx.canvas.width * ratios[0]);
+      const scaleY = ctx.canvas.height / (ctx.canvas.height * ratios[1]);
+      x1 *= scaleX;
+      x2 *= scaleX;
+      y1 *= scaleY;
+      y2 *= scaleY;
+
       const width = x2 - x1;
       const height = y2 - y1;
 

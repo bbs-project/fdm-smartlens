@@ -107,8 +107,6 @@ export const renderBoxes = async ( // 예측 경계 상자를 렌더링하는 �
       ctx.lineWidth = 4;
       ctx.strokeRect(x1, y1, width, height); // 경계 상자의 테두리를 화면에 그림
       
-      console.log("[YOLO] (x,y,width,height)=[", x1, y1, width, height, "] (", klass, ")");
-
       // Draw the label background.
       ctx.fillStyle = color; // 레이블 배경색 설정 
       const textWidth = ctx.measureText(klass + " - " + score + "%").width; // 레이블 텍스트 너비 측정
@@ -134,13 +132,13 @@ export const renderBoxes = async ( // 예측 경계 상자를 렌더링하는 �
    */
   function getKoreanKlass(code) {
     const koreanLabels = {
-      1: "출혈",
-      2: "궤양",
-      3: "부식",
-      4: "종양",
-      5: "안구증상"
+      0: "출혈",      // Bleeding
+      1: "궤양",      // Corrosion
+      2: "부식",      // Tumor
+      3: "종양",      // Ulcer
+      4: "안구증상"   // EyesSymptom
     };
-    return koreanLabels[code] || code;
+    return koreanLabels[code] !== undefined ? koreanLabels[code] : code;
   }
 
 };
