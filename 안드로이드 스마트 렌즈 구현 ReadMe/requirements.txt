@@ -161,7 +161,7 @@ psutil @ file:///D:/bld/psutil_1719274706746/work
 pure-eval @ file:///home/conda/feedstock_root/build_artifacts/pure_eval_1642875951954/work
 py-cpuinfo @ file:///home/conda/feedstock_root/build_artifacts/py-cpuinfo_1666774466606/work
 pyaml==24.7.0
-pyasn1==0.6.0
+pyasn1==0.6.3
 pyasn1_modules==0.4.0
 pybind11==2.13.1
 pycocotools==2.0.8
