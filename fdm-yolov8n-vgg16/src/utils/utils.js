@@ -1,60 +1,57 @@
-export class Colors {
+import * as tf from "@tensorflow/tfjs";
 
-// ultralytics color palette https://ultralytics.com/
-// 1.#FF3838: Red Orange
-// 2. #FF9D97: Light Coral
-// 3. #FF701F: Orange Red
-// 4. #FFB21D: Bright Orange
-// 5. #CFD231: Yellow Green
-// 6. #48F90A: Lime Green
-// 7. #92CC17: Yellow Green
-// 8. #3DDB86: Medium Sea Green
-// 9. #1A9334: Forest Green
-// 10. #00D4BB: Turquoise
-// 11. #2C99A8: Light Sea Green
-// 12. #00C2FF: Deep Sky Blue
-// 13. #344593: Dark Slate Blue
-// 14. #6473FF: Cornflower Blue
-// 15. #0018EC: Blue
-// 16. #8438FF: Purple
-// 17. #520085: Dark Purple
-// 18. #CB38FF: Medium Orchid
-// 19. #FF95C8: Light Pink
-// 20. #FF37C7: Hot Pink
-  constructor() {
-    this.palette = [
-      "#FF3838",
-      "#FF9D97",
-      "#FF701F",
-      "#FFB21D",
-      "#CFD231",
-      "#48F90A",
-      "#92CC17",
-      "#3DDB86",
-      "#1A9334",
-      "#00D4BB",
-      "#2C99A8",
-      "#00C2FF",
-      "#344593",
-      "#6473FF",
-      "#0018EC",
-      "#8438FF",
-      "#520085",
-      "#CB38FF",
-      "#FF95C8",
-      "#FF37C7",
-    ];
-    this.n = this.palette.length;
-  }
+/**
+ * Preprocess image/frame before forwarding into the model
+ * @param {tf.Tensor} img - Input image tensor
+ * @param {number} modelWidth - Target model width
+ * @param {number} modelHeight - Target model height
+ * @returns {[tf.Tensor, number, number]} - Input tensor, xRatio, yRatio
+ */
+export const preprocess = (img, modelWidth, modelHeight) => {
+  let xRatio, yRatio;
 
-  get = (i) => this.palette[Math.floor(i) % this.n];
+  const input = tf.tidy(() => {
+    const [h, w] = img.shape.slice(0, 2);
+    const maxSize = Math.max(w, h);
+    
+    // Pad image to square
+    const imgPadded = img.pad([
+      [0, maxSize - h], // padding y [bottom only]
+      [0, maxSize - w], // padding x [right only]
+      [0, 0],
+    ]);
 
-  static hexToRgba = (hex, alpha) => {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-      ? `rgba(${[parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)].join(
-          ", "
-        )}, ${alpha})`
-      : null;
-  };
-}
+    // Calculate ratios for box scaling
+    xRatio = maxSize / w;
+    yRatio = maxSize / w;
+
+    // Resize, normalize, and add batch dimension
+    return tf.image
+      .resizeBilinear(imgPadded, [modelHeight, modelWidth])
+      .div(255.0)
+      .expandDims(0);
+  });
+
+  return [input, xRatio, yRatio];
+};
+
+/**
+ * Cleanup tensors to prevent memory leaks
+ * @param {Array} tensors - Array of tensors to dispose
+ */
+export const cleanupTensors = (...tensors) => {
+  tensors.forEach(tensor => {
+    if (tensor && typeof tensor.dispose === 'function') {
+      tensor.dispose();
+    }
+  });
+};
+
+/**
+ * Check if object is a tensor
+ * @param {any} obj - Object to check
+ * @returns {boolean}
+ */
+export const isTensor = (obj) => {
+  return obj && typeof obj.shape === 'object' && typeof obj.dispose === 'function';
+};
