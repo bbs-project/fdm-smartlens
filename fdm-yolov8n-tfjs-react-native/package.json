@@ -9,8 +9,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/webpack-config": "^19.0.0",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/netinfo": "11.4.1",
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-backend-cpu": "^4.22.0",
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@expo/metro-runtime": "~4.0.0",
     "autoprefixer": "^10.4.20",
     "copy-webpack-plugin": "^12.0.2",
     "postcss": "^8.4.41",
@@ -112,6 +113,8 @@
     "sha.js": ">=2.4.12",
     "cipher-base": ">=1.0.5",
     "image-size": ">=1.2.1",
-    "ua-parser-js": ">=0.7.33"
+    "ua-parser-js": ">=0.7.33",
+    "memfs": ">=4.0.0",
+    "svgo": ">=3.0.0"
   }
 }
