@@ -1,186 +1,128 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
-import { Camera } from 'expo-camera/legacy';
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import CameraView from '../CameraView';
+import HistoryScreen from '../screens/HistoryScreen';
+import StatisticsScreen from '../screens/StatisticsScreen';
+import { yoloModelURI, vggModelURI } from '../modelHandler';
 import * as tf from '@tensorflow/tfjs';
-import '@tensorflow/tfjs-react-native';
-import { yoloModelURI, vggModelURI } from './modelHandler';
-import CameraView from './CameraView';
-import { LoadingState, ModelConfig } from './types';
-import { performanceMonitor } from './utils/performance';
+import { DiagnosisResult } from '../services/DiagnosisService';
 
-// Start app launch performance tracking
-performanceMonitor.startMetric('app_launch');
+type TabType = 'camera' | 'history' | 'statistics';
 
-interface TensorInfo {
-  shape: number[];
+interface TabConfig {
+  id: TabType;
+  label: string;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
 }
 
-const App: React.FC = () => {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [type, setType] = useState<'front' | 'back'>('back');
+const TABS: TabConfig[] = [
+  { id: 'camera', label: '진단', icon: 'camera' },
+  { id: 'history', label: '기록', icon: 'history' },
+  { id: 'statistics', label: '통계', icon: 'chart-bar' },
+];
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState<TabType>('camera');
   const [yoloModel, setYoloModel] = useState<tf.GraphModel | null>(null);
   const [vggModel, setVggModel] = useState<tf.GraphModel | null>(null);
-  const [loading, setLoading] = useState<LoadingState>({ loading: true, progress: 0, error: null });
-  const [inputTensor, setInputTensor] = useState<number[]>([]);
+  const [loading, setLoading] = useState({ loading: true, progress: 0, error: null });
 
-  const configurations: ModelConfig = { threshold: 0.25 };
-
-  const loadModels = useCallback(async () => {
+  const handleDiagnosisComplete = async (result: Omit<DiagnosisResult, 'id' | 'timestamp'>) => {
+    // 진단 완료 시 자동으로 기록에 저장
     try {
-      setLoading({ loading: true, progress: 0, error: null });
-
-      // Request camera permission
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-
-      if (status !== 'granted') {
-        setLoading({ loading: false, progress: 1, error: 'Camera permission denied' });
-        return;
-      }
-
-      // Wait for TensorFlow to be ready
-      await tf.ready();
-      console.log('[App] TensorFlow ready');
-      performanceMonitor.endMetric('app_launch');
-
-      // Load YOLOv8 model
-      console.log('[App] Loading YOLOv8 model...');
-      performanceMonitor.startMetric('yolo_load');
-      const yolov8 = await tf.loadGraphModel(yoloModelURI, {
-        onProgress: (fraction: number) => {
-          setLoading(prev => ({ ...prev, loading: true, progress: fraction * 0.5 }));
-        },
-      });
-      const yoloDuration = performanceMonitor.endMetric('yolo_load');
-      if (yoloDuration) performanceMonitor.trackModelLoading('YOLOv8', yoloDuration);
-
-      // Load VGG16 model
-      console.log('[App] Loading VGG16 model...');
-      performanceMonitor.startMetric('vgg_load');
-      const vgg16 = await tf.loadGraphModel(vggModelURI, {
-        onProgress: (fraction: number) => {
-          setLoading(prev => ({ ...prev, loading: true, progress: 0.5 + fraction * 0.5 }));
-        },
-      });
-      const vggDuration = performanceMonitor.endMetric('vgg_load');
-      if (vggDuration) performanceMonitor.trackModelLoading('VGG16', vggDuration);
-
-      // Warm up YOLO model
-      console.log('[App] Warming up models...');
-      const dummyInput = tf.ones(yolov8.inputs[0].shape);
-      await yolov8.executeAsync(dummyInput);
-      tf.dispose(dummyInput);
-
-      // Update state
-      setInputTensor(yolov8.inputs[0].shape);
-      setYoloModel(yolov8);
-      setVggModel(vgg16);
-      setLoading({ loading: false, progress: 1, error: null });
-      
-      console.log('[App] Models loaded successfully');
+      const { DiagnosisService } = await import('../services/DiagnosisService');
+      await DiagnosisService.saveDiagnosis(result);
     } catch (error) {
-      console.error('[App] Model loading error:', error);
-      setLoading({ 
-        loading: false, 
-        progress: 1, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      });
+      console.error('[App] Error saving diagnosis:', error);
     }
-  }, []);
-
-  useEffect(() => {
-    loadModels();
-    
-    // Cleanup on unmount
-    return () => {
-      if (yoloModel) yoloModel.dispose();
-      if (vggModel) vggModel.dispose();
-      tf.disposeVariables();
-    };
-  }, [loadModels]);
-
-  const handleFlipCamera = () => {
-    setType(prev => prev === 'back' ? 'front' : 'back');
   };
 
-  // Render loading state
-  if (loading.loading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={{ fontSize: 16, marginTop: 16 }}>
-          Loading models... {(loading.progress * 100).toFixed(0)}%
-        </Text>
-        {loading.error && (
-          <Text style={{ color: '#ff0000', marginTop: 8 }}>Error: {loading.error}</Text>
-        )}
-      </View>
-    );
-  }
-
-  // Render permission denied state
-  if (hasPermission === false) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
-        <Text style={{ fontSize: 16 }}>Camera permission not granted!</Text>
-        <TouchableOpacity 
-          style={{ marginTop: 16, backgroundColor: '#3b82f6', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 }}
-          onPress={loadModels}
-        >
-          <Text style={{ color: '#fff', fontWeight: '600' }}>Grant Permission</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  // Render main camera view
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
-      <View style={{ flex: 1, width: '100%', height: '100%' }}>
-        <View style={{ flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+  const renderScreen = () => {
+    switch (activeTab) {
+      case 'camera':
+        return (
           <CameraView
-            type={type}
+            type="back"
             yoloModel={yoloModel}
             vggModel={vggModel}
-            inputTensorSize={inputTensor}
-            config={configurations}
-          >
-            <View style={{ 
-              position: 'absolute', 
-              left: 0, 
-              top: 0, 
-              width: '100%', 
-              height: '100%', 
-              justifyContent: 'flex-end', 
-              alignItems: 'center', 
-              backgroundColor: 'transparent',
-              zIndex: 20 
-            }}>
-              <TouchableOpacity
-                style={{ 
-                  flexDirection: 'row', 
-                  alignItems: 'center', 
-                  backgroundColor: 'transparent', 
-                  borderWidth: 2, 
-                  borderColor: '#fff', 
-                  padding: 12, 
-                  marginBottom: 40, 
-                  borderRadius: 8 
-                }}
-                onPress={handleFlipCamera}
-              >
-                <MaterialCommunityIcons name="camera-flip" size={30} color="#fff" style={{ marginHorizontal: 8 }} />
-                <Text style={{ marginHorizontal: 8, color: '#fff', fontSize: 16, fontWeight: '600' }}>Flip Camera</Text>
-              </TouchableOpacity>
-            </View>
-          </CameraView>
-        </View>
+            inputTensorSize={[1, 3, 640, 640]}
+            config={{ threshold: 0.25 }}
+            onDiagnosisComplete={handleDiagnosisComplete}
+          />
+        );
+      case 'history':
+        return <HistoryScreen onSelectDiagnosis={(diag) => console.log('Selected:', diag)} />;
+      case 'statistics':
+        return <StatisticsScreen />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.content}>
+        {renderScreen()}
       </View>
-      <StatusBar style="auto" />
+      
+      <View style={styles.tabBar}>
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <TouchableOpacity
+              key={tab.id}
+              style={[styles.tab, isActive && styles.activeTab]}
+              onPress={() => setActiveTab(tab.id)}
+            >
+              <MaterialCommunityIcons
+                name={tab.icon}
+                size={24}
+                color={isActive ? '#2196F3' : '#999'}
+              />
+              <Text
+                style={[
+                  styles.tabLabel,
+                  { color: isActive ? '#2196F3' : '#999' },
+                ]}
+              >
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  content: {
+    flex: 1,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    paddingBottom: 20,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  activeTab: {
+    backgroundColor: '#f5f5f5',
+  },
+  tabLabel: {
+    fontSize: 12,
+    marginTop: 4,
+  },
+});
 
 export default App;

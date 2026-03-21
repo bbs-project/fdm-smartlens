@@ -1,5 +1,76 @@
 <resources>
-    <string name="app_name">FDM-SmartLens</string>
+    <string name="app_name">FDM SmartLens</string>
     <string name="gpu">GPU</string>
     <string name="cpu">CPU</string>
+    
+    <!-- Common -->
+    <string name="cancel">취소</string>
+    <string name="confirm">확인</string>
+    <string name="delete">삭제</string>
+    <string name="save">저장</string>
+    <string name="close">닫기</string>
+    <string name="settings">설정</string>
+    
+    <!-- Camera/Diagnosis -->
+    <string name="camera">카메라</string>
+    <string name="diagnosis">진단</string>
+    <string name="detecting">감지 중…</string>
+    <string name="no_detection">감지된 객체가 없습니다</string>
+    <string name="confidence">신뢰도</string>
+    <string name="symptoms">증상</string>
+    <string name="disease">질병</string>
+    <string name="normal">정상</string>
+    <string name="inference_time">추론 시간</string>
+    
+    <!-- History -->
+    <string name="history">기록</string>
+    <string name="no_history">진단 기록이 없습니다</string>
+    <string name="history_description">카메라로 질병을 진단하면 기록이 저장됩니다</string>
+    <string name="delete_history">진단 기록 삭제</string>
+    <string name="delete_history_confirm">이 진단 기록을 삭제하시겠습니까?</string>
+    <string name="clear_all">전체 삭제</string>
+    <string name="clear_all_confirm">모든 진단 기록을 삭제하시겠습니까?</string>
+    <string name="detected_symptoms">감지된 증상 (%d 개)</string>
+    <string name="more_symptoms">+%d 개</string>
+    
+    <!-- Statistics -->
+    <string name="statistics">통계</string>
+    <string name="total_diagnoses">총 진단 횟수</string>
+    <string name="average_confidence">평균 신뢰도</string>
+    <string name="last_diagnosis">마지막 진단</string>
+    <string name="disease_distribution">질병별 분포</string>
+    <string name="no_statistics">아직 통계 데이터가 없습니다</string>
+    <string name="diagnosis_guide">진단 가이드</string>
+    <string name="guide_1">정기적인 진단으로 질병을 조기에 발견하세요</string>
+    <string name="guide_2">신뢰도가 80% 이상이면 결과를 신뢰할 수 있습니다</string>
+    <string name="guide_3">이상 증상이 발견되면 전문가와 상담하세요</string>
+    
+    <!-- Time -->
+    <string name="just_now">방금 전</string>
+    <string name="minutes_ago">%d 분 전</string>
+    <string name="hours_ago">%d 시간 전</string>
+    <string name="days_ago">%d 일 전</string>
+    
+    <!-- Messages -->
+    <string name="camera_permission_denied">카메라 권한이 거부되었습니다</string>
+    <string name="loading_model">모델 로딩 중…</string>
+    <string name="model_load_complete">모델 로딩 완료</string>
+    <string name="diagnosis_saved">진단 결과가 저장되었습니다</string>
+    <string name="diagnosis_save_failed">진단 결과 저장 실패</string>
+    
+    <!-- Diseases -->
+    <string name="disease_normal">정상</string>
+    <string name="disease_viral_hemorrhagic">바이러스성출혈성패혈증</string>
+    <string name="disease_lymphocystis">림포시스티스병</string>
+    <string name="disease_streptococcosis">연쇄구균증</string>
+    <string name="disease_scuticociliatosis">스쿠티카병</string>
+    <string name="disease_vibriosis">비브리오병</string>
+    <string name="disease_edwardsiellosis">에드워드병</string>
+    
+    <!-- Symptoms -->
+    <string name="symptom_bleeding">출혈</string>
+    <string name="symptom_corrosion">부식</string>
+    <string name="symptom_tumor">종양</string>
+    <string name="symptom_ulcer">궤양</string>
+    <string name="symptom_eyes">눈 증상</string>
 </resources>

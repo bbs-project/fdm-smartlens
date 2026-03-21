@@ -1,210 +1,277 @@
-import ReactNativePerformance from 'react-native-performance';
-import { Platform } from 'react-native';
+import * as tf from '@tensorflow/tfjs';
 
 /**
- * Performance Monitoring Utility for FDM SmartLens
- * 
- * Features:
- * - App startup time monitoring
- * - Model loading performance tracking
- * - Inference latency measurement
- * - Memory usage monitoring
+ * 성능 측정 결과
  */
+export interface PerformanceMetrics {
+  inferenceTime: number;
+  preprocessingTime: number;
+  postprocessingTime: number;
+  fps: number;
+  memoryUsage?: number;
+}
 
-class PerformanceMonitor {
+/**
+ * 성능 모니터링 클래스
+ */
+export class PerformanceMonitor {
   private static instance: PerformanceMonitor;
   private metrics: Map<string, number[]> = new Map();
-  private isMonitoring: boolean = false;
+  private frameCount: number = 0;
+  private lastFpsUpdate: number = 0;
+  private currentFps: number = 0;
 
-  private constructor() {
-    this.initialize();
-  }
+  private constructor() {}
 
-  public static getInstance(): PerformanceMonitor {
+  static getInstance(): PerformanceMonitor {
     if (!PerformanceMonitor.instance) {
       PerformanceMonitor.instance = new PerformanceMonitor();
     }
     return PerformanceMonitor.instance;
   }
 
-  private initialize() {
-    // Register app launch marker
-    ReactNativePerformance.markAppStart();
-
-    // Enable FPS monitoring on iOS
-    if (Platform.OS === 'ios') {
-      ReactNativePerformance.startFPSMonitor({
-        sampleInterval: 1000,
-        lowFPSWarningThreshold: 50,
-        lowFPSSampleCount: 3,
-      });
-    }
+  /**
+   * 시간 측정 시작
+   */
+  startTimer(label: string): void {
+    // @ts-ignore - performance.now() is available in React Native
+    const startTime = performance.now();
+    this.metrics.set(`start_${label}`, [startTime]);
   }
 
   /**
-   * Start tracking a metric
+   * 시간 측정 종료 및 반환 (ms)
    */
-  public startMetric(name: string): void {
-    ReactNativePerformance.mark(`${name}_start`);
-  }
+  endTimer(label: string): number {
+    // @ts-ignore - performance.now() is available in React Native
+    const endTime = performance.now();
+    const startTime = this.metrics.get(`start_${label}`)?.[0] || endTime;
+    const duration = endTime - startTime;
 
-  /**
-   * End tracking a metric and record the duration
-   */
-  public endMetric(name: string): number | null {
-    const markName = `${name}_start`;
-    const duration = ReactNativePerformance.measure(name, markName).duration;
-    
-    // Store metric for analysis
-    if (!this.metrics.has(name)) {
-      this.metrics.set(name, []);
+    // Record metric
+    if (!this.metrics.has(label)) {
+      this.metrics.set(label, []);
     }
-    this.metrics.get(name)!.push(duration);
+    const history = this.metrics.get(label)!;
+    history.push(duration);
 
-    // Log slow operations
-    if (duration > 1000) {
-      console.warn(`[Performance] Slow operation detected: ${name} took ${duration.toFixed(2)}ms`);
+    // Keep only last 30 measurements
+    if (history.length > 30) {
+      history.shift();
     }
 
     return duration;
   }
 
   /**
-   * Track model loading performance
+   * 평균 추론 시간 조회 (ms)
    */
-  public trackModelLoading(modelName: string, duration: number): void {
-    console.log(`[Performance] ${modelName} loaded in ${duration.toFixed(2)}ms`);
-    
-    // Send to analytics service if configured
-    this.sendToAnalytics('model_load', {
-      model: modelName,
-      duration,
-      timestamp: Date.now(),
-    });
+  getAverageTime(label: string): number {
+    const history = this.metrics.get(label);
+    if (!history || history.length === 0) return 0;
+    return history.reduce((a, b) => a + b, 0) / history.length;
   }
 
   /**
-   * Track inference latency
+   * FPS 업데이트
    */
-  public trackInference(modelName: string, latency: number, imageSize: string): void {
-    const key = `inference_${modelName}`;
-    
-    if (!this.metrics.has(key)) {
-      this.metrics.set(key, []);
+  updateFps(): number {
+    const now = Date.now();
+    this.frameCount++;
+
+    if (now - this.lastFpsUpdate >= 1000) {
+      this.currentFps = this.frameCount;
+      this.frameCount = 0;
+      this.lastFpsUpdate = now;
     }
-    this.metrics.get(key)!.push(latency);
 
-    console.log(`[Performance] ${modelName} inference: ${latency.toFixed(2)}ms (${imageSize})`);
+    return this.currentFps;
   }
 
   /**
-   * Get average latency for a metric
+   * 현재 FPS 조회
    */
-  public getAverageLatency(name: string): number {
-    const values = this.metrics.get(name) || [];
-    if (values.length === 0) return 0;
-    
-    const sum = values.reduce((a, b) => a + b, 0);
-    return sum / values.length;
+  getFps(): number {
+    return this.currentFps;
   }
 
   /**
-   * Get performance report
+   * 메모리 사용량 조회 (MB)
    */
-  public getReport(): Record<string, any> {
-    const report: Record<string, any> = {};
-    
+  getMemoryUsage(): number | undefined {
+    // @ts-ignore - React Native specific
+    if (global.performance && global.performance.memory) {
+      // @ts-ignore
+      return global.performance.memory.usedJSHeapSize / (1024 * 1024);
+    }
+    return undefined;
+  }
+
+  /**
+   * 성능 메트릭스 조회
+   */
+  getMetrics(label: string): PerformanceMetrics {
+    return {
+      inferenceTime: this.getAverageTime(label),
+      preprocessingTime: this.getAverageTime(`${label}_preprocess`),
+      postprocessingTime: this.getAverageTime(`${label}_postprocess`),
+      fps: this.getFps(),
+      memoryUsage: this.getMemoryUsage(),
+    };
+  }
+
+  /**
+   * 모든 메트릭스 로그 출력
+   */
+  logMetrics(): void {
+    console.log('=== Performance Metrics ===');
     this.metrics.forEach((values, key) => {
-      if (values.length > 0) {
-        const sum = values.reduce((a, b) => a + b, 0);
-        const avg = sum / values.length;
+      if (!key.startsWith('start_')) {
+        const avg = values.reduce((a, b) => a + b, 0) / values.length;
         const min = Math.min(...values);
         const max = Math.max(...values);
-        
-        report[key] = {
-          count: values.length,
-          avg: avg.toFixed(2),
-          min: min.toFixed(2),
-          max: max.toFixed(2),
-          unit: 'ms',
-        };
+        console.log(`${key}: ${avg.toFixed(2)}ms (min: ${min.toFixed(2)}ms, max: ${max.toFixed(2)}ms)`);
       }
     });
-
-    return report;
+    console.log(`FPS: ${this.getFps()}`);
+    console.log(`Memory: ${this.getMemoryUsage()?.toFixed(2) || 'N/A'} MB`);
+    console.log('========================');
   }
 
   /**
-   * Start continuous monitoring
+   * 메트릭스 초기화
    */
-  public startMonitoring(): void {
-    if (this.isMonitoring) return;
-    
-    this.isMonitoring = true;
-    
-    // Monitor memory usage every 30 seconds
-    setInterval(() => {
-      this.checkMemoryUsage();
-    }, 30000);
+  reset(): void {
+    this.metrics.clear();
+    this.frameCount = 0;
+    this.lastFpsUpdate = 0;
+    this.currentFps = 0;
+  }
+}
+
+/**
+ * 텐서 메모리 관리 유틸리티
+ */
+export class TensorMemoryManager {
+  private static disposedTensors: WeakSet<tf.Tensor> = new WeakSet();
+
+  /**
+   * 텐서 자동 정리 (tidy wrapper)
+   */
+  static tidy<T>(fn: () => T): T {
+    return tf.tidy(fn);
   }
 
   /**
-   * Check memory usage
+   * 텐서 수동 정리
    */
-  private checkMemoryUsage(): void {
-    // @ts-ignore - performance.memory is not in types but available in React Native
-    if (performance.memory) {
+  static dispose(...tensors: tf.Tensor[]): void {
+    tensors.forEach(tensor => {
+      if (!this.disposedTensors.has(tensor)) {
+        tensor.dispose();
+        this.disposedTensors.add(tensor);
+      }
+    });
+  }
+
+  /**
+   * 텐서 배열 정리
+   */
+  static disposeArray(tensors: tf.Tensor[]): void {
+    this.dispose(...tensors);
+  }
+
+  /**
+   * 메모리 상태 조회
+   */
+  static getMemoryInfo(): tf.MemoryInfo {
+    return tf.memory();
+  }
+
+  /**
+   * 메모리 최적화 설정
+   */
+  static optimize(): void {
+    // Dispose all tensors
+    tf.disposeVariables();
+    
+    // Force garbage collection (if available)
+    // @ts-ignore
+    if (global.gc) {
       // @ts-ignore
-      const { usedJSHeapSize, totalJSHeapSize } = performance.memory;
-      const usagePercent = (usedJSHeapSize / totalJSHeapSize) * 100;
-      
-      console.log(`[Performance] Memory usage: ${usagePercent.toFixed(2)}%`);
-      
-      if (usagePercent > 80) {
-        console.warn('[Performance] High memory usage detected! Consider cleanup.');
+      global.gc();
+    }
+  }
+}
+
+/**
+ * GPU 가속 설정
+ */
+export class GpuAccelerator {
+  /**
+   * GPU 사용 가능 여부 확인
+   */
+  static async isGpuAvailable(): Promise<boolean> {
+    try {
+      const backend = tf.getBackend();
+      return backend === 'webgl' || backend === 'rn-webgl';
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * GPU 백엔드 설정
+   */
+  static async enableGpu(): Promise<boolean> {
+    try {
+      // React Native WebGL backend
+      await tf.setBackend('rn-webgl');
+      await tf.ready();
+      console.log('[GPU] WebGL backend enabled');
+      return true;
+    } catch (error) {
+      console.warn('[GPU] Failed to enable GPU, falling back to CPU');
+      try {
+        await tf.setBackend('cpu');
+        await tf.ready();
+        return false;
+      } catch {
+        return false;
       }
     }
   }
 
   /**
-   * Send metrics to analytics service
+   * CPU 백엔드 설정
    */
-  private sendToAnalytics(event: string, data: Record<string, any>): void {
-    // Implement your analytics integration here
-    // Example: Firebase Analytics, Mixpanel, etc.
-    console.log(`[Analytics] ${event}:`, data);
+  static async enableCpu(): Promise<void> {
+    await tf.setBackend('cpu');
+    await tf.ready();
+    console.log('[CPU] CPU backend enabled');
   }
 
   /**
-   * Clear all metrics
+   * 현재 백엔드 조회
    */
-  public clearMetrics(): void {
-    this.metrics.clear();
+  static getCurrentBackend(): string {
+    return tf.getBackend();
+  }
+
+  /**
+   * 백엔드 정보 조회
+   */
+  static getBackendInfo(): { backend: string; isGpu: boolean } {
+    const backend = tf.getBackend();
+    return {
+      backend,
+      isGpu: backend === 'webgl' || backend === 'rn-webgl',
+    };
   }
 }
 
-// Export singleton instance
-export const performanceMonitor = PerformanceMonitor.getInstance();
-
-// Export HOC for component performance monitoring
-export function withPerformanceMonitoring<P extends object>(
-  WrappedComponent: React.ComponentType<P>,
-  componentName: string
-) {
-  return function WithPerformanceMonitoring(props: P) {
-    React.useEffect(() => {
-      performanceMonitor.startMetric(`${componentName}_mount`);
-      
-      return () => {
-        const duration = performanceMonitor.endMetric(`${componentName}_mount`);
-        if (duration && duration > 500) {
-          console.warn(`[Performance] ${componentName} mount took ${duration.toFixed(2)}ms`);
-        }
-      };
-    }, []);
-
-    return <WrappedComponent {...props} />;
-  };
-}
-
-export default performanceMonitor;
+export default {
+  PerformanceMonitor,
+  TensorMemoryManager,
+  GpuAccelerator,
+};

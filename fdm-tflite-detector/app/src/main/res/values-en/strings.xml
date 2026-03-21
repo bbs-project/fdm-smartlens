@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">FDM SmartLens</string>
+    <string name="gpu">GPU</string>
+    <string name="cpu">CPU</string>
+    
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="close">Close</string>
+    <string name="settings">Settings</string>
+    
+    <!-- Camera/Diagnosis -->
+    <string name="camera">Camera</string>
+    <string name="diagnosis">Diagnosis</string>
+    <string name="detecting">Detecting…</string>
+    <string name="no_detection">No objects detected</string>
+    <string name="confidence">Confidence</string>
+    <string name="symptoms">Symptoms</string>
+    <string name="disease">Disease</string>
+    <string name="normal">Normal</string>
+    <string name="inference_time">Inference Time</string>
+    
+    <!-- History -->
+    <string name="history">History</string>
+    <string name="no_history">No diagnosis history</string>
+    <string name="history_description">Diagnosis records will be saved when you diagnose diseases with the camera</string>
+    <string name="delete_history">Delete Diagnosis Record</string>
+    <string name="delete_history_confirm">Are you sure you want to delete this diagnosis record?</string>
+    <string name="clear_all">Clear All</string>
+    <string name="clear_all_confirm">Are you sure you want to delete all diagnosis records?</string>
+    <string name="detected_symptoms">Detected Symptoms (%d items)</string>
+    <string name="more_symptoms">+%d more</string>
+    
+    <!-- Statistics -->
+    <string name="statistics">Statistics</string>
+    <string name="total_diagnoses">Total Diagnoses</string>
+    <string name="average_confidence">Average Confidence</string>
+    <string name="last_diagnosis">Last Diagnosis</string>
+    <string name="disease_distribution">Disease Distribution</string>
+    <string name="no_statistics">No statistics data yet</string>
+    <string name="diagnosis_guide">Diagnosis Guide</string>
+    <string name="guide_1">Detect diseases early through regular diagnosis</string>
+    <string name="guide_2">Results are reliable when confidence is above 80%</string>
+    <string name="guide_3">Consult an expert if abnormal symptoms are found</string>
+    
+    <!-- Time -->
+    <string name="just_now">Just now</string>
+    <string name="minutes_ago">%d min ago</string>
+    <string name="hours_ago">%d hours ago</string>
+    <string name="days_ago">%d days ago</string>
+    
+    <!-- Messages -->
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="loading_model">Loading model…</string>
+    <string name="model_load_complete">Model loaded successfully</string>
+    <string name="diagnosis_saved">Diagnosis result saved</string>
+    <string name="diagnosis_save_failed">Failed to save diagnosis result</string>
+    
+    <!-- Diseases -->
+    <string name="disease_normal">Normal</string>
+    <string name="disease_viral_hemorrhagic">Viral Hemorrhagic Septicemia</string>
+    <string name="disease_lymphocystis">Lymphocystis Disease</string>
+    <string name="disease_streptococcosis">Streptococcosis</string>
+    <string name="disease_scuticociliatosis">Scuticociliatosis</string>
+    <string name="disease_vibriosis">Vibriosis</string>
+    <string name="disease_edwardsiellosis">Edwardsiellosis</string>
+    
+    <!-- Symptoms -->
+    <string name="symptom_bleeding">Bleeding</string>
+    <string name="symptom_corrosion">Corrosion</string>
+    <string name="symptom_tumor">Tumor</string>
+    <string name="symptom_ulcer">Ulcer</string>
+    <string name="symptom_eyes">Eye Symptom</string>
+</resources>
