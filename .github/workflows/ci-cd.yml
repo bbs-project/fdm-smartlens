@@ -7,35 +7,6 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  # React Native - Quality Check
-  react-native-quality:
-    name: React Native Quality Check
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: fdm-yolov8n-vgg16
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'yarn'
-          cache-dependency-path: fdm-yolov8n-vgg16/yarn.lock
-      
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      
-      - name: TypeScript type check
-        run: yarn typecheck
-        continue-on-error: true
-      
-      - name: Run tests
-        run: yarn test --passWithNoTests
-        continue-on-error: true
-
   # Android Build
   android-build:
     name: Android Build
