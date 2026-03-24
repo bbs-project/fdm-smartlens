@@ -20,7 +20,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-async-storage/async-storage": "2.1.0",
     "@react-native-community/netinfo": "11.4.1",
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-backend-cpu": "^4.22.0",
@@ -33,7 +33,7 @@
     "expo-status-bar": "~2.0.0",
     "fraction": "^0.2.0",
     "nativewind": "^2.0.11",
-    "node-fetch": "2.7.0",
+    "node-fetch": "^3.3.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.3",
@@ -41,7 +41,7 @@
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.26.10",
     "@expo/metro-runtime": "~4.0.0",
     "@react-native/eslint-config": "^0.73.2",
     "@testing-library/jest-native": "^5.4.3",
@@ -151,6 +151,11 @@
     "tough-cookie": ">=5.0.0",
     "iconv-lite": ">=0.6.3",
     "http-cache-semantics": ">=4.1.1",
-    "path-to-regexp": ">=0.1.12"
+    "path-to-regexp": ">=0.1.12",
+    "debug": ">=4.3.4",
+    "validator": ">=13.12.0",
+    "marked": ">=12.0.0",
+    "moment": ">=2.30.1",
+    "axios": ">=1.7.4"
   }
 }

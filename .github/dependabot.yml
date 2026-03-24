@@ -1,0 +1,141 @@
+version: 2
+updates:
+  # Enable version updates for npm (React Native projects)
+  - package-ecosystem: "npm"
+    directory: "/fdm-yolov8n-vgg16"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
+    labels:
+      - "dependencies"
+      - "security"
+    versioning-strategy: increase
+    groups:
+      tensorflow:
+        patterns:
+          - "@tensorflow/*"
+      expo:
+        patterns:
+          - "expo*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-native*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "npm"
+    directory: "/fdm-yolov8n-tfjs-react-native"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+    groups:
+      tensorflow:
+        patterns:
+          - "@tensorflow/*"
+
+  - package-ecosystem: "npm"
+    directory: "/yolov8n-tfjs-react-native"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "npm"
+    directory: "/yolov5-tfjs-react-native-master"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "npm"
+    directory: "/yolov5-tfjs-react-native-master/yolov5-tfjs-react-native-master"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+
+  # Enable version updates for Gradle (Android projects)
+  - package-ecosystem: "gradle"
+    directory: "/fdm-tflite-detector"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+      - "android"
+    ignore:
+      - dependency-name: "org.tensorflow:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "androidx.camera:*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "gradle"
+    directory: "/YOLOv8-TfLite-Object-Detector"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+      - "android"
+
+  - package-ecosystem: "gradle"
+    directory: "/VGG16-TfLite-Object-Detector"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+      - "android"
+
+  # Enable updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    labels:
+      - "dependencies"
+      - "ci/cd"
