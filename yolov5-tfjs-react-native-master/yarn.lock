@@ -978,6 +978,11 @@
     "@expo/sudo-prompt" "^9.3.1"
     debug "^3.1.0"
 
+"@expo/dom-webview@^55.0.3":
+  version "55.0.3"
+  resolved "https://registry.yarnpkg.com/@expo/dom-webview/-/dom-webview-55.0.3.tgz#97dfe2ede4a17eb05a44ba65487724192f07a6cf"
+  integrity sha512-bY4/rfcZ0f43DvOtMn8/kmPlmo01tex5hRoc5hKbwBwQjqWQuQt0ACwu7akR9IHI4j0WNG48eL6cZB6dZUFrzg==
+
 "@expo/env@~0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@expo/env/-/env-0.4.2.tgz#911709933e6fc1b45b3d2efdb10ca2c52fac7e91"
@@ -1046,6 +1051,15 @@
     json5 "^2.2.3"
     write-file-atomic "^2.3.0"
 
+"@expo/log-box@55.0.7":
+  version "55.0.7"
+  resolved "https://registry.yarnpkg.com/@expo/log-box/-/log-box-55.0.7.tgz#c845e2695bef4e3409bea939d2028e70c389c266"
+  integrity sha512-m7V1k2vlMp4NOj3fopjOg4zl/ANXyTRF3HMTMep2GZAKsPiDzgOQ41nm8CaU50/HlDIGXlCObss07gOn20UpHQ==
+  dependencies:
+    "@expo/dom-webview" "^55.0.3"
+    anser "^1.4.9"
+    stacktrace-parser "^0.1.10"
+
 "@expo/metro-config@0.19.12", "@expo/metro-config@~0.19.12":
   version "0.19.12"
   resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.19.12.tgz#ce6d8dec9aab790874cd0299a64968f74267db1c"
@@ -1070,10 +1084,16 @@
     postcss "~8.4.32"
     resolve-from "^5.0.0"
 
-"@expo/metro-runtime@~4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-4.0.1.tgz#ccc74b32bd48eb64c34a4ff29690204cc11c6e7a"
-  integrity sha512-CRpbLvdJ1T42S+lrYa1iZp1KfDeBp4oeZOK3hdpiS5n0vR0nhD6sC1gGF0sTboCTp64tLteikz5Y3j53dvgOIw==
+"@expo/metro-runtime@~55.0.6":
+  version "55.0.6"
+  resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-55.0.6.tgz#351e8d0470766015600c86b9c72a90dc8b05febe"
+  integrity sha512-l8VvgKN9md+URjeQDB+DnHVmvpcWI6zFLH6yv7GTv4sfRDKyaZ5zDXYjTP1phYdgW6ea2NrRtCGNIxylWhsgtg==
+  dependencies:
+    "@expo/log-box" "55.0.7"
+    anser "^1.4.9"
+    pretty-format "^29.7.0"
+    stacktrace-parser "^0.1.10"
+    whatwg-fetch "^3.0.0"
 
 "@expo/osascript@^2.1.6":
   version "2.4.2"
