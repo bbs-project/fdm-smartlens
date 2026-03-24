@@ -71,5 +71,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
 
     // RecyclerView for history list
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 }
