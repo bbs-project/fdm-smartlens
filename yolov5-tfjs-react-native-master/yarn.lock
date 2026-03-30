@@ -3547,10 +3547,10 @@ expo-asset@~11.0.5:
     invariant "^2.2.4"
     md5-file "^3.2.3"
 
-expo-camera@~55.0.10:
-  version "55.0.10"
-  resolved "https://registry.yarnpkg.com/expo-camera/-/expo-camera-55.0.10.tgz#5f95f4cb5329b30c1aa4a2c76efcd751c37084bb"
-  integrity sha512-ftDNJbGsAPNJ/QrM3j6g8/rQAOqTwZpqtvmzF7V9VX0movaCznZFdYsLi/Fff9WeEk1KzcnLIlmSz4Tj+BCrJA==
+expo-camera@~55.0.11:
+  version "55.0.11"
+  resolved "https://registry.yarnpkg.com/expo-camera/-/expo-camera-55.0.11.tgz#50d74f8c59463de970097f5ee171945685763acf"
+  integrity sha512-8z8qVXHPj4lGF8n4e6zsYR1YkTjNPz6Vim8T+EwAWaG9+5gQw9ax+fCz6+J9FVCR4mjK5XjZj1UaG65NbYJOHg==
   dependencies:
     barcode-detector "^3.0.0"
 
