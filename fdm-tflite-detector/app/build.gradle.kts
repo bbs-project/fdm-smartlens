@@ -68,7 +68,7 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.17.0")
 
     // Gson for JSON serialization
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.code.gson:gson:2.13.2")
 
     // RecyclerView for history list
     implementation("androidx.recyclerview:recyclerview:1.4.0")
