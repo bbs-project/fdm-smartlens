@@ -1109,6 +1109,15 @@
     anser "^1.4.9"
     stacktrace-parser "^0.1.10"
 
+"@expo/log-box@55.0.8":
+  version "55.0.8"
+  resolved "https://registry.yarnpkg.com/@expo/log-box/-/log-box-55.0.8.tgz#248b95d29d31a725faa6f4d11fa5587a365214a1"
+  integrity sha512-WVEuW1XcntUdOpQk8k9cUymM5FHKmEcPr6QO9SVIin3WYk5FbbwHRYr1T6GfwWF0UA2s9w9heeYolesq99vFIw==
+  dependencies:
+    "@expo/dom-webview" "^55.0.3"
+    anser "^1.4.9"
+    stacktrace-parser "^0.1.10"
+
 "@expo/metro-config@55.0.11", "@expo/metro-config@~55.0.11":
   version "55.0.11"
   resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-55.0.11.tgz#d363db7c3c074510bbd2c136058f25c05144ec74"
@@ -1134,10 +1143,16 @@
     postcss "~8.4.32"
     resolve-from "^5.0.0"
 
-"@expo/metro-runtime@~4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-4.0.1.tgz#ccc74b32bd48eb64c34a4ff29690204cc11c6e7a"
-  integrity sha512-CRpbLvdJ1T42S+lrYa1iZp1KfDeBp4oeZOK3hdpiS5n0vR0nhD6sC1gGF0sTboCTp64tLteikz5Y3j53dvgOIw==
+"@expo/metro-runtime@~55.0.7":
+  version "55.0.7"
+  resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-55.0.7.tgz#8102147f25695b8720640abf748b1f5e480d6049"
+  integrity sha512-fV+DYvJ+A3fKEwkpJiXUhrpsWy4HjjbdapwJi/QmnGLFKYrzGvGqsWG+xf3mmUDwP413t6GL9162bnyMReYOaA==
+  dependencies:
+    "@expo/log-box" "55.0.8"
+    anser "^1.4.9"
+    pretty-format "^29.7.0"
+    stacktrace-parser "^0.1.10"
+    whatwg-fetch "^3.0.0"
 
 "@expo/metro@~54.2.0":
   version "54.2.0"
