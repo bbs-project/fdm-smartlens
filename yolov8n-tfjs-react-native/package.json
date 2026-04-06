@@ -18,7 +18,7 @@
     "expo": "~55.0.11",
     "expo-camera": "~55.0.13",
     "expo-gl": "~13.6.0",
-    "expo-splash-screen": "~0.29.0",
+    "expo-splash-screen": "~55.0.15",
     "expo-status-bar": "~55.0.4",
     "fraction": "^0.2.0",
     "nativewind": "^2.0.11",
