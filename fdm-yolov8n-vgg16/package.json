@@ -59,7 +59,7 @@
     "jest": "^30.3.0",
     "postcss": "^8.4.41",
     "postcss-loader": "^8.1.1",
-    "prettier": "^3.2.5",
+    "prettier": "^3.8.2",
     "react-native-performance": "^6.0.0",
     "react-test-renderer": "^19.2.5",
     "tailwindcss": "3.4.19",
