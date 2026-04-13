@@ -95,13 +95,13 @@ jupyterlab_server @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab
 jupyterlab_widgets @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab_widgets_1716891641122/work
 kaggle==1.6.14
 kagglehub==0.2.7
-keras==3.5.0
+keras==3.12.1
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.2
 kiwisolver @ file:///D:/bld/kiwisolver_1695380110085/work
 libclang==18.1.1
 lxml==5.2.2
-Markdown==3.6
+Markdown==3.8.1
 markdown-it-py @ file:///home/conda/feedstock_root/build_artifacts/markdown-it-py_1686175045316/work
 MarkupSafe @ file:///D:/bld/markupsafe_1706900063757/work
 matplotlib==3.9.0
@@ -124,7 +124,7 @@ notebook_shim @ file:///home/conda/feedstock_root/build_artifacts/notebook-shim_
 numpy==1.26.4
 oauth2client==4.1.3
 oauthlib==3.2.2
-onnx==1.16.1
+onnx==1.21.0
 onnx-graphsurgeon==0.5.2
 onnx-simplifier==0.4.36
 onnx-tf==1.10.0
@@ -156,7 +156,7 @@ prometheus_client @ file:///home/conda/feedstock_root/build_artifacts/prometheus
 promise==2.3
 prompt_toolkit @ file:///home/conda/feedstock_root/build_artifacts/prompt-toolkit_1718047967974/work
 proto-plus==1.24.0
-protobuf==3.20.3
+protobuf==5.29.6
 psutil @ file:///D:/bld/psutil_1719274706746/work
 pure-eval @ file:///home/conda/feedstock_root/build_artifacts/pure_eval_1642875951954/work
 py-cpuinfo @ file:///home/conda/feedstock_root/build_artifacts/py-cpuinfo_1666774466606/work
@@ -195,7 +195,7 @@ scikit-learn==1.5.1
 scipy @ file:///C:/bld/scipy-split_1716470385682/work/dist/scipy-1.13.1-cp39-cp39-win_amd64.whl#sha256=490e922ef930c40e74290d95915a98295b9059d02849059317bab82ba7810581
 seaborn @ file:///home/conda/feedstock_root/build_artifacts/seaborn-split_1714494649443/work
 Send2Trash @ file:///D:/bld/send2trash_1712585174948/work
-sentencepiece==0.2.0
+sentencepiece==0.2.1
 seqeval==1.2.2
 six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
 smmap==5.0.1
@@ -239,7 +239,7 @@ tinycss2 @ file:///home/conda/feedstock_root/build_artifacts/tinycss2_1713974937
 toml==0.10.2
 tomli @ file:///home/conda/feedstock_root/build_artifacts/tomli_1644342247877/work
 toolz==0.12.1
-torch==2.3.1
+torch==2.8.0
 torchsummary==1.5.1
 torchvision==0.18.1
 tornado @ file:///D:/bld/tornado_1717722891796/work
@@ -260,7 +260,7 @@ wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_170473120541
 webcolors @ file:///home/conda/feedstock_root/build_artifacts/webcolors_1717667289718/work
 webencodings @ file:///home/conda/feedstock_root/build_artifacts/webencodings_1694681268211/work
 websocket-client @ file:///home/conda/feedstock_root/build_artifacts/websocket-client_1713923384721/work
-Werkzeug==3.0.3
+Werkzeug==3.1.6
 widgetsnbextension @ file:///home/conda/feedstock_root/build_artifacts/widgetsnbextension_1716891659446/work
 win-inet-pton @ file:///D:/bld/win_inet_pton_1667051142467/work
 wrapt==1.14.1
