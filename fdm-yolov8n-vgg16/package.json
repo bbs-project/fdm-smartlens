@@ -57,7 +57,7 @@
     "detox": "^20.50.1",
     "eslint": "^8.57.0",
     "jest": "^30.3.0",
-    "postcss": "^8.4.41",
+    "postcss": "^8.5.10",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.2.5",
     "react-native-performance": "^6.0.0",
