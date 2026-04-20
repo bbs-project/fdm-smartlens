@@ -8,7 +8,7 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     reviewers:
       - "bbs-project/maintainers"
     labels:
@@ -38,7 +38,7 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "security"
@@ -46,7 +46,10 @@ updates:
       tensorflow:
         patterns:
           - "@tensorflow/*"
-
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+        
   - package-ecosystem: "npm"
     directory: "/yolov8n-tfjs-react-native"
     schedule:
@@ -58,7 +61,10 @@ updates:
     labels:
       - "dependencies"
       - "security"
-
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+        
   - package-ecosystem: "npm"
     directory: "/yolov5-tfjs-react-native-master"
     schedule:
@@ -66,11 +72,14 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "security"
-
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+        
   - package-ecosystem: "npm"
     directory: "/yolov5-tfjs-react-native-master/yolov5-tfjs-react-native-master"
     schedule:
@@ -78,11 +87,14 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "security"
-
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+        
   # Enable version updates for Gradle (Android projects)
   - package-ecosystem: "gradle"
     directory: "/fdm-tflite-detector"
@@ -91,7 +103,7 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "security"
@@ -109,12 +121,15 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "security"
       - "android"
-
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+        
   - package-ecosystem: "gradle"
     directory: "/VGG16-TfLite-Object-Detector"
     schedule:
@@ -122,12 +137,15 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "security"
       - "android"
-
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+        
   # Enable updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -139,3 +157,6 @@ updates:
     labels:
       - "dependencies"
       - "ci/cd"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
