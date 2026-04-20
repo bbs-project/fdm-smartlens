@@ -3403,10 +3403,10 @@ expo-font@~55.0.6:
   dependencies:
     fontfaceobserver "^2.1.0"
 
-expo-gl@~13.6.0:
-  version "13.6.0"
-  resolved "https://registry.yarnpkg.com/expo-gl/-/expo-gl-13.6.0.tgz#b93c7dd2df8f2afe3823b043c37f898adda8ee92"
-  integrity sha512-hhRC2ZTDpc2YoElojutJTOYQsjSxX68lgL+2TSgWRrrvUXFeua1Ohz5DL/0iNCeoabs1earf/4qhxIdozkrhMA==
+expo-gl@~55.0.13:
+  version "55.0.13"
+  resolved "https://registry.yarnpkg.com/expo-gl/-/expo-gl-55.0.13.tgz#cd3f87c0e4f1c8a9c97bf50f08dc782d57a03b67"
+  integrity sha512-OSUb5CcpMvysesf8QdCSwXlSSO5SrTlpdaEEoGn2MUXok6Do7Mo0c4IPv2aD7HEH0Cw1uNGCan2X8g4Bt5p93w==
   dependencies:
     invariant "^2.2.4"
 
