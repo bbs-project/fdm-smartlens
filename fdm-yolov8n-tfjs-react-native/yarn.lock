@@ -981,7 +981,7 @@
 "@expo/dom-webview@^55.0.5":
   version "55.0.5"
   resolved "https://registry.yarnpkg.com/@expo/dom-webview/-/dom-webview-55.0.5.tgz#00628e9e5e5116b8f5c92840bed0a5a06e3ccc77"
-  integrity sha512-lt3uxYOCk3wmWvtOOvsC35CKGbDAOx5C2EaY8SH1JVSfBzqmF8Cs0Xp1MPxncDPMyxpMiWx5SvvV/iLF1rJU4A==
+  integrity "sha1-AGKOnl5RFrj1yShAvtCloG48zHc= sha512-lt3uxYOCk3wmWvtOOvsC35CKGbDAOx5C2EaY8SH1JVSfBzqmF8Cs0Xp1MPxncDPMyxpMiWx5SvvV/iLF1rJU4A=="
 
 "@expo/env@~0.4.2":
   version "0.4.2"
@@ -1054,7 +1054,7 @@
 "@expo/log-box@55.0.10":
   version "55.0.10"
   resolved "https://registry.yarnpkg.com/@expo/log-box/-/log-box-55.0.10.tgz#05a5a8c99d28cfdd4c7de1262b93a105485baea2"
-  integrity sha512-7jdikExgIrCIF5e3P1qMwcUZ2tcxrNdVqE9Y8kNMUHqZ+ipMlin+SiZwJKHM1+am4CYGjhdyrzbnIpvEcLDYcg==
+  integrity "sha1-BaWoyZ0oz91MfeEmK5OhBUhbrqI= sha512-7jdikExgIrCIF5e3P1qMwcUZ2tcxrNdVqE9Y8kNMUHqZ+ipMlin+SiZwJKHM1+am4CYGjhdyrzbnIpvEcLDYcg=="
   dependencies:
     "@expo/dom-webview" "^55.0.5"
     anser "^1.4.9"
@@ -1087,7 +1087,7 @@
 "@expo/metro-runtime@~55.0.9":
   version "55.0.9"
   resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-55.0.9.tgz#5b01e292382acfe4d07d00b7f8562b37b296685d"
-  integrity sha512-H37b2Mc/8GiQbwtUFzUTxA3KsAMZu00SRg/RhbHa9xVE7J0n5ZX4NHy0LJEFAbkzTb1TUy1hLpo3oEKnG+rLyg==
+  integrity "sha1-WwHikjgqz+TQfQC3+FYrN7KWaF0= sha512-H37b2Mc/8GiQbwtUFzUTxA3KsAMZu00SRg/RhbHa9xVE7J0n5ZX4NHy0LJEFAbkzTb1TUy1hLpo3oEKnG+rLyg=="
   dependencies:
     "@expo/log-box" "55.0.10"
     anser "^1.4.9"
@@ -2048,10 +2048,10 @@
   resolved "https://registry.yarnpkg.com/@webgpu/types/-/types-0.1.38.tgz#6fda4b410edc753d3213c648320ebcf319669020"
   integrity sha512-7LrhVKz2PRh+DD7+S+PVaFd5HxaWQvoMqBbsV9fNJO1pjUs1P8bM2vQVNfk+3URTqbuTI7gkXi0rfsN0IadoBA==
 
-"@xmldom/xmldom@0.8.12", "@xmldom/xmldom@^0.8.8", "@xmldom/xmldom@~0.7.7":
-  version "0.8.12"
-  resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.8.12.tgz#889b8f1c5ea7fe9022ffdb6aaf79b76aa92e22d8"
-  integrity sha512-9k/gHF6n/pAi/9tqr3m3aqkuiNosYTurLLUtc7xQ9sxB/wm7WPygCv8GYa6mS0fLJEHhqMC1ATYhz++U/lRHqg==
+"@xmldom/xmldom@0.8.13", "@xmldom/xmldom@^0.8.8", "@xmldom/xmldom@~0.7.7":
+  version "0.8.13"
+  resolved "https://registry.npmmirror.com/@xmldom/xmldom/-/xmldom-0.8.13.tgz#00d1dd940b218dff2e49309d410d8bb212159225"
+  integrity sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==
 
 abab@>=2.0.6:
   version "2.0.6"
@@ -2224,7 +2224,7 @@ at-least-node@^1.0.0:
 autoprefixer@^10.5.0:
   version "10.5.0"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.5.0.tgz#33d87e443430f020a0f85319d6ff1593cb291be9"
-  integrity sha512-FMhOoZV4+qR6aTUALKX2rEqGG+oyATvwBt9IIzVR5rMa2HRWPkxf+P+PAJLD1I/H5/II+HuZcBJYEFBpq39ong==
+  integrity "sha1-M9h+RDQw8CCg+FMZ1v8Vk8spG+k= sha512-FMhOoZV4+qR6aTUALKX2rEqGG+oyATvwBt9IIzVR5rMa2HRWPkxf+P+PAJLD1I/H5/II+HuZcBJYEFBpq39ong=="
   dependencies:
     browserslist "^4.28.2"
     caniuse-lite "^1.0.30001787"
@@ -2640,7 +2640,7 @@ camelize@^1.0.0:
 caniuse-lite@^1.0.30001759, caniuse-lite@^1.0.30001787:
   version "1.0.30001788"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001788.tgz#31e97d1bfec332b3f2d7eea7781460c97629b3bf"
-  integrity sha512-6q8HFp+lOQtcf7wBK+uEenxymVWkGKkjFpCvw5W25cmMwEDU45p1xQFBQv8JDlMMry7eNxyBaR+qxgmTUZkIRQ==
+  integrity "sha1-Mel9G/7DMrPy1+6neBRgyXYps78= sha512-6q8HFp+lOQtcf7wBK+uEenxymVWkGKkjFpCvw5W25cmMwEDU45p1xQFBQv8JDlMMry7eNxyBaR+qxgmTUZkIRQ=="
 
 chalk@^2.0.1, chalk@^2.4.2:
   version "2.4.2"
@@ -3703,10 +3703,10 @@ flow-parser@0.*:
   resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.305.1.tgz#7005636003a649929a842ed9f720cb16fb89c679"
   integrity sha512-Z9Ccx5Kt1FbRLMx1USVX6zqOQ3jd7D/NltJnRXSOjm99+JTQ9UNnayyc/o/fKqJOVXg121xkjXgfjToq9bb0kA==
 
-follow-redirects@>=1.15.9, follow-redirects@^1.0.0, follow-redirects@^1.15.11:
-  version "1.15.11"
-  resolved "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.11.tgz#777d73d72a92f8ec4d2e410eb47352a56b8e8340"
-  integrity sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==
+follow-redirects@1.16.0, follow-redirects@^1.0.0, follow-redirects@^1.15.11:
+  version "1.16.0"
+  resolved "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.16.0.tgz#28474a159d3b9d11ef62050a14ed60e4df6d61bc"
+  integrity sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==
 
 fontfaceobserver@^2.1.0:
   version "2.3.0"
@@ -5677,7 +5677,7 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.0.2, postcss-value-parser@^
 postcss@>=8.4.41, postcss@^8.4.12, postcss@^8.4.47, postcss@^8.5.10, postcss@~8.4.32:
   version "8.5.10"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.10.tgz#8992d8c30acf3f12169e7c09514a12fed7e48356"
-  integrity sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ==
+  integrity "sha1-iZLYwwrPPxIWnnwJUUoS/tfkg1Y= sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ=="
   dependencies:
     nanoid "^3.3.11"
     picocolors "^1.1.1"
@@ -6905,10 +6905,10 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
 
-uuid@>=11.0.2, uuid@^7.0.3, uuid@^8.0.0, uuid@^8.3.2:
-  version "13.0.0"
-  resolved "https://registry.npmmirror.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
-  integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
+uuid@14.0.0, uuid@^7.0.3, uuid@^8.0.0, uuid@^8.3.2:
+  version "14.0.0"
+  resolved "https://registry.npmmirror.com/uuid/-/uuid-14.0.0.tgz#0af883220163d264ffe0c084f6b8a89b9666966d"
+  integrity sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==
 
 validate-npm-package-name@^5.0.0:
   version "5.0.1"

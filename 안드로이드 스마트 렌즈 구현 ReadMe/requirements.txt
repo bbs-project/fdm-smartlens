@@ -45,7 +45,7 @@ fsspec==2024.6.1
 gast==0.4.0
 gin-config==0.5.0
 gitdb==4.0.11
-GitPython==3.1.43
+GitPython==3.1.47
 google-api-core==2.19.1
 google-api-python-client==2.136.0
 google-auth==2.31.0
@@ -95,12 +95,12 @@ jupyterlab_server @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab
 jupyterlab_widgets @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab_widgets_1716891641122/work
 kaggle==1.6.14
 kagglehub==0.2.7
-keras==3.12.1
+keras==3.13.2
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.2
 kiwisolver @ file:///D:/bld/kiwisolver_1695380110085/work
 libclang==18.1.1
-lxml==5.2.2
+lxml==6.1.0
 Markdown==3.8.1
 markdown-it-py @ file:///home/conda/feedstock_root/build_artifacts/markdown-it-py_1686175045316/work
 MarkupSafe @ file:///D:/bld/markupsafe_1706900063757/work

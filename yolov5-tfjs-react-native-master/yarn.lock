@@ -1435,7 +1435,7 @@
 "@react-native-async-storage/async-storage@3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-3.0.2.tgz#caf2d0d7038dc2b8a2a48971bdbd047db0a2ac86"
-  integrity sha512-XP0zDIl+1XoeuQ7f878qXKdl77zLwzLALPpxvNRc7ZtDh9ew36WSvOdQOhFkexMySapFAWxEbZxS8K8J2DU4eg==
+  integrity "sha1-yvLQ1wONwriipIlxvb0EfbCirIY= sha512-XP0zDIl+1XoeuQ7f878qXKdl77zLwzLALPpxvNRc7ZtDh9ew36WSvOdQOhFkexMySapFAWxEbZxS8K8J2DU4eg=="
   dependencies:
     idb "8.0.3"
 
@@ -1845,10 +1845,10 @@
   resolved "https://registry.yarnpkg.com/@webgpu/types/-/types-0.1.38.tgz#6fda4b410edc753d3213c648320ebcf319669020"
   integrity sha512-7LrhVKz2PRh+DD7+S+PVaFd5HxaWQvoMqBbsV9fNJO1pjUs1P8bM2vQVNfk+3URTqbuTI7gkXi0rfsN0IadoBA==
 
-"@xmldom/xmldom@0.8.12", "@xmldom/xmldom@^0.8.8", "@xmldom/xmldom@~0.7.7":
-  version "0.8.12"
-  resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.8.12.tgz#889b8f1c5ea7fe9022ffdb6aaf79b76aa92e22d8"
-  integrity sha512-9k/gHF6n/pAi/9tqr3m3aqkuiNosYTurLLUtc7xQ9sxB/wm7WPygCv8GYa6mS0fLJEHhqMC1ATYhz++U/lRHqg==
+"@xmldom/xmldom@0.8.13", "@xmldom/xmldom@^0.8.8", "@xmldom/xmldom@~0.7.7":
+  version "0.8.13"
+  resolved "https://registry.npmmirror.com/@xmldom/xmldom/-/xmldom-0.8.13.tgz#00d1dd940b218dff2e49309d410d8bb212159225"
+  integrity sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==
 
 abab@>=2.0.6:
   version "2.0.6"
@@ -3155,7 +3155,7 @@ expo-modules-core@2.2.3:
 expo-splash-screen@~55.0.18:
   version "55.0.18"
   resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-55.0.18.tgz#d746c41198c4b2e23c7ce5e2589e92e02e7c421d"
-  integrity sha512-5+sA2L2e0v7GVWl2+j24lSNnC39HtycCCtJXHiC2N+voWLtZp0qMLAKZY/1vhkzjYzDzfkUcZiRzkdhwT9x+2Q==
+  integrity "sha1-10bEEZjEsuI8fOXiWJ6S4C58Qh0= sha512-5+sA2L2e0v7GVWl2+j24lSNnC39HtycCCtJXHiC2N+voWLtZp0qMLAKZY/1vhkzjYzDzfkUcZiRzkdhwT9x+2Q=="
   dependencies:
     "@expo/prebuild-config" "^55.0.15"
 
@@ -3381,10 +3381,10 @@ flow-parser@0.*:
   resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.305.1.tgz#7005636003a649929a842ed9f720cb16fb89c679"
   integrity sha512-Z9Ccx5Kt1FbRLMx1USVX6zqOQ3jd7D/NltJnRXSOjm99+JTQ9UNnayyc/o/fKqJOVXg121xkjXgfjToq9bb0kA==
 
-follow-redirects@>=1.15.9, follow-redirects@^1.0.0, follow-redirects@^1.15.11:
-  version "1.15.11"
-  resolved "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.11.tgz#777d73d72a92f8ec4d2e410eb47352a56b8e8340"
-  integrity sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==
+follow-redirects@1.16.0, follow-redirects@^1.0.0, follow-redirects@^1.15.11:
+  version "1.16.0"
+  resolved "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.16.0.tgz#28474a159d3b9d11ef62050a14ed60e4df6d61bc"
+  integrity sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==
 
 fontfaceobserver@^2.1.0:
   version "2.3.0"
@@ -6366,10 +6366,10 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
 
-uuid@>=11.0.2, uuid@^7.0.3, uuid@^8.0.0, uuid@^8.3.2:
-  version "13.0.0"
-  resolved "https://registry.npmmirror.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
-  integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
+uuid@14.0.0, uuid@^7.0.3, uuid@^8.0.0, uuid@^8.3.2:
+  version "14.0.0"
+  resolved "https://registry.npmmirror.com/uuid/-/uuid-14.0.0.tgz#0af883220163d264ffe0c084f6b8a89b9666966d"
+  integrity sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==
 
 validate-npm-package-name@^5.0.0:
   version "5.0.1"
