@@ -978,10 +978,10 @@
     "@expo/sudo-prompt" "^9.3.1"
     debug "^3.1.0"
 
-"@expo/dom-webview@^55.0.5":
-  version "55.0.5"
-  resolved "https://registry.yarnpkg.com/@expo/dom-webview/-/dom-webview-55.0.5.tgz#00628e9e5e5116b8f5c92840bed0a5a06e3ccc77"
-  integrity "sha1-AGKOnl5RFrj1yShAvtCloG48zHc= sha512-lt3uxYOCk3wmWvtOOvsC35CKGbDAOx5C2EaY8SH1JVSfBzqmF8Cs0Xp1MPxncDPMyxpMiWx5SvvV/iLF1rJU4A=="
+"@expo/dom-webview@^55.0.6":
+  version "55.0.6"
+  resolved "https://registry.yarnpkg.com/@expo/dom-webview/-/dom-webview-55.0.6.tgz#216908464ddf0196a2828210042712a651109f20"
+  integrity sha512-ZNm8tiNEZysxrr36J0x4mOCGyJDcaIvL/3tMxBz0VJIJDcV19xjuJAhJQxHovu+jKx6s9tRyEAINa1mdrzV39g==
 
 "@expo/env@~0.4.2":
   version "0.4.2"
@@ -1051,12 +1051,12 @@
     json5 "^2.2.3"
     write-file-atomic "^2.3.0"
 
-"@expo/log-box@55.0.10":
-  version "55.0.10"
-  resolved "https://registry.yarnpkg.com/@expo/log-box/-/log-box-55.0.10.tgz#05a5a8c99d28cfdd4c7de1262b93a105485baea2"
-  integrity "sha1-BaWoyZ0oz91MfeEmK5OhBUhbrqI= sha512-7jdikExgIrCIF5e3P1qMwcUZ2tcxrNdVqE9Y8kNMUHqZ+ipMlin+SiZwJKHM1+am4CYGjhdyrzbnIpvEcLDYcg=="
+"@expo/log-box@55.0.12":
+  version "55.0.12"
+  resolved "https://registry.yarnpkg.com/@expo/log-box/-/log-box-55.0.12.tgz#da3bb055eb094916f88d5fee8b918d7a0a628467"
+  integrity sha512-f9ARS8J60cq3LLNdIqmUjYwyerBzVS5Ecp7KjIf3GOIPjW0571rkcwLz4/U18l/1DeSkSzIkYsNl2TC9oTdWaQ==
   dependencies:
-    "@expo/dom-webview" "^55.0.5"
+    "@expo/dom-webview" "^55.0.6"
     anser "^1.4.9"
     stacktrace-parser "^0.1.10"
 
@@ -1084,12 +1084,12 @@
     postcss "~8.4.32"
     resolve-from "^5.0.0"
 
-"@expo/metro-runtime@~55.0.9":
-  version "55.0.9"
-  resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-55.0.9.tgz#5b01e292382acfe4d07d00b7f8562b37b296685d"
-  integrity "sha1-WwHikjgqz+TQfQC3+FYrN7KWaF0= sha512-H37b2Mc/8GiQbwtUFzUTxA3KsAMZu00SRg/RhbHa9xVE7J0n5ZX4NHy0LJEFAbkzTb1TUy1hLpo3oEKnG+rLyg=="
+"@expo/metro-runtime@~55.0.11":
+  version "55.0.11"
+  resolved "https://registry.yarnpkg.com/@expo/metro-runtime/-/metro-runtime-55.0.11.tgz#86abebda2ba21c697f9672202b8f3de54b618d18"
+  integrity sha512-4KKi/jGrIEXi2YGu0hYTVr0CEeRJy5SXbCrz9+KDZkuD3ROwKNpM1DBawni5rhPVovFnR323HBck9GaxhnfrRw==
   dependencies:
-    "@expo/log-box" "55.0.10"
+    "@expo/log-box" "55.0.12"
     anser "^1.4.9"
     pretty-format "^29.7.0"
     stacktrace-parser "^0.1.10"
