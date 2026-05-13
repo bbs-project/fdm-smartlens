@@ -1,0 +1,264 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1778460213214,
+  "projectRoot": "/home/kcloud/fdm-smartlens",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "README2.md": {
+      "path": "README2.md",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1778460213203,
+      "keyFiles": [
+        "requirements.txt",
+        "스마트 렌즈 환경 구성 참고 사이트 모음집.txt",
+        "안드로이드 스마트 렌즈 ReadMe.pptx"
+      ]
+    },
+    "VGG16-TfLite-Object-Detector": {
+      "path": "VGG16-TfLite-Object-Detector",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1778460213204,
+      "keyFiles": [
+        "README.md",
+        "build.gradle.kts",
+        "gradle.properties",
+        "gradlew",
+        "gradlew.bat"
+      ]
+    },
+    "YOLOv8-TfLite-Object-Detector": {
+      "path": "YOLOv8-TfLite-Object-Detector",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1778460213206,
+      "keyFiles": [
+        "README.md",
+        "build.gradle.kts",
+        "gradle.properties",
+        "gradlew",
+        "gradlew.bat"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 2,
+      "lastAccessed": 1778460213206,
+      "keyFiles": [
+        "API.md",
+        "USER_GUIDE.md"
+      ]
+    },
+    "fdm-tflite-detector": {
+      "path": "fdm-tflite-detector",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1778460213206,
+      "keyFiles": [
+        "README",
+        "README-bbs.md",
+        "README.md",
+        "build.gradle.kts",
+        "gradle.properties"
+      ]
+    },
+    "fdm-yolov8n-tfjs-react-native": {
+      "path": "fdm-yolov8n-tfjs-react-native",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1778460213206,
+      "keyFiles": [
+        "README.md",
+        "app.json",
+        "babel.config.js",
+        "index.js",
+        "metro.config.js"
+      ]
+    },
+    "fdm-yolov8n-vgg16": {
+      "path": "fdm-yolov8n-vgg16",
+      "purpose": null,
+      "fileCount": 16,
+      "lastAccessed": 1778460213206,
+      "keyFiles": [
+        "README.md",
+        "app.json",
+        "babel.config.js",
+        "index.js",
+        "jest.config.js"
+      ]
+    },
+    "smartlens-data": {
+      "path": "smartlens-data",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1778460213207,
+      "keyFiles": []
+    },
+    "yolov5-tfjs-react-native-master": {
+      "path": "yolov5-tfjs-react-native-master",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1778460213207,
+      "keyFiles": [
+        "README.md",
+        "app.json",
+        "babel.config.js",
+        "index.js",
+        "metro.config.js"
+      ]
+    },
+    "yolov8n-tfjs-react-native": {
+      "path": "yolov8n-tfjs-react-native",
+      "purpose": null,
+      "fileCount": 11,
+      "lastAccessed": 1778460213207,
+      "keyFiles": [
+        "README.md",
+        "app.json",
+        "babel.config.js",
+        "index.js",
+        "metro.config.js"
+      ]
+    },
+    "안드로이드 스마트 렌즈 구현 ReadMe": {
+      "path": "안드로이드 스마트 렌즈 구현 ReadMe",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1778460213207,
+      "keyFiles": [
+        "requirements.txt"
+      ]
+    },
+    "VGG16-TfLite-Object-Detector/app": {
+      "path": "VGG16-TfLite-Object-Detector/app",
+      "purpose": "Application code",
+      "fileCount": 4,
+      "lastAccessed": 1778460213207,
+      "keyFiles": [
+        "build.gradle.kts",
+        "local.properties",
+        "proguard-rules.pro"
+      ]
+    },
+    "YOLOv8-TfLite-Object-Detector/app": {
+      "path": "YOLOv8-TfLite-Object-Detector/app",
+      "purpose": "Application code",
+      "fileCount": 3,
+      "lastAccessed": 1778460213208,
+      "keyFiles": [
+        "build.gradle.kts",
+        "proguard-rules.pro"
+      ]
+    },
+    "fdm-tflite-detector/app": {
+      "path": "fdm-tflite-detector/app",
+      "purpose": "Application code",
+      "fileCount": 3,
+      "lastAccessed": 1778460213208,
+      "keyFiles": [
+        "build.gradle.kts",
+        "proguard-rules.pro"
+      ]
+    },
+    "fdm-yolov8n-tfjs-react-native/assets": {
+      "path": "fdm-yolov8n-tfjs-react-native/assets",
+      "purpose": "Static assets",
+      "fileCount": 4,
+      "lastAccessed": 1778460213208,
+      "keyFiles": [
+        "adaptive-icon.png",
+        "favicon.png",
+        "icon.png"
+      ]
+    },
+    "fdm-yolov8n-tfjs-react-native/node_modules": {
+      "path": "fdm-yolov8n-tfjs-react-native/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1778460213209,
+      "keyFiles": []
+    },
+    "fdm-yolov8n-vgg16/assets": {
+      "path": "fdm-yolov8n-vgg16/assets",
+      "purpose": "Static assets",
+      "fileCount": 4,
+      "lastAccessed": 1778460213210,
+      "keyFiles": [
+        "adaptive-icon.png",
+        "favicon.png",
+        "icon.png"
+      ]
+    },
+    "yolov5-tfjs-react-native-master/assets": {
+      "path": "yolov5-tfjs-react-native-master/assets",
+      "purpose": "Static assets",
+      "fileCount": 4,
+      "lastAccessed": 1778460213210,
+      "keyFiles": [
+        "adaptive-icon.png",
+        "favicon.png",
+        "icon.png"
+      ]
+    },
+    "yolov5-tfjs-react-native-master/node_modules": {
+      "path": "yolov5-tfjs-react-native-master/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1778460213212,
+      "keyFiles": []
+    },
+    "yolov8n-tfjs-react-native/assets": {
+      "path": "yolov8n-tfjs-react-native/assets",
+      "purpose": "Static assets",
+      "fileCount": 4,
+      "lastAccessed": 1778460213212,
+      "keyFiles": [
+        "adaptive-icon.png",
+        "favicon.png",
+        "icon.png"
+      ]
+    },
+    "yolov8n-tfjs-react-native/node_modules": {
+      "path": "yolov8n-tfjs-react-native/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1778460213214,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}

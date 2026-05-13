@@ -4,11 +4,11 @@ updates:
   - package-ecosystem: "npm"
     directory: "/fdm-yolov8n-vgg16"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
     reviewers:
       - "bbs-project/maintainers"
     labels:
@@ -34,18 +34,29 @@ updates:
   - package-ecosystem: "npm"
     directory: "/fdm-yolov8n-tfjs-react-native"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
+    versioning-strategy: increase
     groups:
       tensorflow:
         patterns:
           - "@tensorflow/*"
+      expo:
+        patterns:
+          - "expo*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-native*"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -53,14 +64,29 @@ updates:
   - package-ecosystem: "npm"
     directory: "/yolov8n-tfjs-react-native"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
     open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
+    versioning-strategy: increase
+    groups:
+      tensorflow:
+        patterns:
+          - "@tensorflow/*"
+      expo:
+        patterns:
+          - "expo*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-native*"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -68,14 +94,29 @@ updates:
   - package-ecosystem: "npm"
     directory: "/yolov5-tfjs-react-native-master"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
+    versioning-strategy: increase
+    groups:
+      tensorflow:
+        patterns:
+          - "@tensorflow/*"
+      expo:
+        patterns:
+          - "expo*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-native*"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -83,14 +124,29 @@ updates:
   - package-ecosystem: "npm"
     directory: "/yolov5-tfjs-react-native-master/yolov5-tfjs-react-native-master"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
+    versioning-strategy: increase
+    groups:
+      tensorflow:
+        patterns:
+          - "@tensorflow/*"
+      expo:
+        patterns:
+          - "expo*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-native*"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -99,15 +155,18 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/fdm-tflite-detector"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
       - "android"
+    versioning-strategy: increase
     ignore:
       - dependency-name: "org.tensorflow:*"
         update-types: ["version-update:semver-major"]
@@ -115,17 +174,39 @@ updates:
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "gradle"
-    directory: "/YOLOv8-TfLite-Object-Detector"
+    directory: "/fdm-yolov8n-vgg16/android"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
       - "android"
+    versioning-strategy: increase
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "gradle"
+    directory: "/YOLOv8-TfLite-Object-Detector"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
+    labels:
+      - "dependencies"
+      - "security"
+      - "android"
+    versioning-strategy: increase
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -133,15 +214,57 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/VGG16-TfLite-Object-Detector"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "security"
       - "android"
+    versioning-strategy: increase
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Enable version updates for pip (Python documentation/references)
+  - package-ecosystem: "pip"
+    directory: "/README2.md"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
+    labels:
+      - "dependencies"
+      - "security"
+      - "python"
+    versioning-strategy: increase
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "pip"
+    directory: "/안드로이드 스마트 렌즈 구현 ReadMe"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
+    labels:
+      - "dependencies"
+      - "security"
+      - "python"
+    versioning-strategy: increase
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -150,13 +273,17 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bbs-project/maintainers"
     labels:
       - "dependencies"
       - "ci/cd"
+    versioning-strategy: increase
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
