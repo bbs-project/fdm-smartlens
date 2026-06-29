@@ -52,7 +52,7 @@
   "resolutions": {
     "serialize-javascript": "7.0.5",
     "minimatch": ">=9.0.3",
-    "tar": ">=7.5.15",
+    "tar": ">=7.5.19",
     "glob-parent": ">=6.0.2",
     "glob": ">=10.4.5",
     "rimraf": ">=5.0.10",
