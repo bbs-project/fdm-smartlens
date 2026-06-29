@@ -95,12 +95,12 @@ jupyterlab_server @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab
 jupyterlab_widgets @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab_widgets_1716891641122/work
 kaggle==1.6.14
 kagglehub==0.2.7
-keras==3.12.1
+keras==3.13.2
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.2
 kiwisolver @ file:///D:/bld/kiwisolver_1695380110085/work
 libclang==18.1.1
-lxml==5.2.2
+lxml==6.1.0
 Markdown==3.8.1
 markdown-it-py @ file:///home/conda/feedstock_root/build_artifacts/markdown-it-py_1686175045316/work
 MarkupSafe @ file:///D:/bld/markupsafe_1706900063757/work
@@ -239,7 +239,7 @@ tinycss2 @ file:///home/conda/feedstock_root/build_artifacts/tinycss2_1713974937
 toml==0.10.2
 tomli @ file:///home/conda/feedstock_root/build_artifacts/tomli_1644342247877/work
 toolz==0.12.1
-torch==2.8.0
+torch==2.10.0
 torchsummary==1.5.1
 torchvision==0.18.1
 tornado @ file:///D:/bld/tornado_1717722891796/work

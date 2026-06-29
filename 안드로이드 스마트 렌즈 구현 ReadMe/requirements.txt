@@ -111,7 +111,7 @@ mistune @ file:///home/conda/feedstock_root/build_artifacts/mistune_169894709961
 mkl==2021.4.0
 ml-dtypes==0.3.2
 mpmath @ file:///home/conda/feedstock_root/build_artifacts/mpmath_1678228039184/work
-msgpack==1.0.8
+msgpack==1.2.1
 munkres==1.1.4
 namex @ file:///home/conda/feedstock_root/build_artifacts/namex_1713169736451/work
 nbclient @ file:///home/conda/feedstock_root/build_artifacts/nbclient_1710317608672/work
@@ -239,7 +239,7 @@ tinycss2 @ file:///home/conda/feedstock_root/build_artifacts/tinycss2_1713974937
 toml==0.10.2
 tomli @ file:///home/conda/feedstock_root/build_artifacts/tomli_1644342247877/work
 toolz==0.12.1
-torch==2.8.0
+torch==2.10.0
 torchsummary==1.5.1
 torchvision==0.18.1
 tornado @ file:///D:/bld/tornado_1717722891796/work
