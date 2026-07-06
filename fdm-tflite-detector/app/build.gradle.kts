@@ -1,11 +1,10 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
 }
 
 android {
     namespace = "kr.re.etri.fdm.smartlens"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "kr.re.etri.fdm.smartlens"
@@ -33,9 +32,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    // With AGP 9's built-in Kotlin, kotlinOptions is removed; the Kotlin jvmTarget
+    // defaults to android.compileOptions.targetCompatibility (JavaVersion.VERSION_17).
 
     buildFeatures {
         viewBinding = true
@@ -44,7 +42,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
@@ -58,14 +56,12 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
 
-    implementation("org.tensorflow:tensorflow-lite:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
-
-    implementation("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4")
-    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-api:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.17.0")
+    // LiteRT (successor to org.tensorflow:tensorflow-lite; keeps the org.tensorflow.lite.* API).
+    // Replaces the old org.tensorflow:tensorflow-lite* artifacts, which duplicated LiteRT's
+    // classes under AGP 9. Coherent 1.4.2 set: litert-support -> litert core; litert-gpu -> api.
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-support:1.4.2")
 
     // Gson for JSON serialization
     implementation("com.google.code.gson:gson:2.14.0")
