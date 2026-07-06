@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -33,9 +32,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    // With AGP 9's built-in Kotlin, kotlinOptions is removed; the Kotlin jvmTarget
+    // defaults to android.compileOptions.targetCompatibility (JavaVersion.VERSION_17).
 
     buildFeatures {
         viewBinding = true
