@@ -49,7 +49,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 
-    val cameraxVersion = "1.7.0-alpha01"
+    val cameraxVersion = "1.7.0-alpha02"
     implementation("androidx.camera:camera-camera2:${cameraxVersion}")
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
