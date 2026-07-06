@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "kr.re.etri.fdm.smartlens"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "kr.re.etri.fdm.smartlens"
