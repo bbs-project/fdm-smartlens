@@ -56,14 +56,12 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
 
-    implementation("org.tensorflow:tensorflow-lite:2.16.1")
-    implementation("org.tensorflow:tensorflow-lite-support:0.5.0")
-
-    implementation("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4")
-    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.16.1")
-    implementation("org.tensorflow:tensorflow-lite-api:2.16.1")
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.16.1")
-    implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.16.1")
+    // LiteRT (successor to org.tensorflow:tensorflow-lite; keeps the org.tensorflow.lite.* API).
+    // Replaces the old org.tensorflow:tensorflow-lite* artifacts, which duplicated LiteRT's
+    // classes under AGP 9. Coherent 1.4.2 set: litert-support -> litert core; litert-gpu -> api.
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-support:1.4.2")
 
     // Gson for JSON serialization
     implementation("com.google.code.gson:gson:2.14.0")
